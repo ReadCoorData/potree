@@ -69,7 +69,7 @@ export class OrbitControls extends EventDispatcher{
 			}
 		};
 
-		let drop = e => {
+	        let drop = e => {
 			this.dispatchEvent({type: 'end'});
 		};
 
@@ -226,7 +226,7 @@ export class OrbitControls extends EventDispatcher{
 		this.tweens = [];
 	}
 
-	update (delta) {
+    update (delta) {
 		let view = this.scene.view;
 
 		{ // apply rotation
@@ -276,6 +276,46 @@ export class OrbitControls extends EventDispatcher{
 			this.viewer.setMoveSpeed(speed);
 		}
 
+
+
+	{
+	    // 6-axis
+
+	    let gamepad = navigator.getGamepads()[0];
+	    if (gamepad !== null) {
+		var deadzone = function(x) {
+		    var dead = .04;
+		    return Math.max((Math.abs(x) - dead) / (1 - dead), 0) * (x > 0 ? 1 : -1);
+		}
+		
+		let forward = -deadzone(gamepad.axes[1]);
+		let right = deadzone(gamepad.axes[0]);
+		let up = -deadzone(gamepad.axes[2]);
+		let pitch = deadzone(gamepad.axes[3]);
+		let roll = -deadzone(gamepad.axes[4]);
+		let yaw = deadzone(gamepad.axes[5]);
+		
+		//console.log(forward, right, up, pitch, roll, yaw);
+
+		view.yaw -= yaw * delta;
+		view.pitch += pitch * delta;
+
+		let dir = view.direction;
+		dir.z = 0;
+		dir.normalize();
+		let side = new THREE.Vector2(dir.y, -dir.x);
+
+		view.translateWorld(
+		    (forward * dir.x + right * side.x) * delta * this.viewer.getMoveSpeed(),
+		    (forward * dir.y + right * side.y) * delta * this.viewer.getMoveSpeed(),
+		    up * delta * this.viewer.getMoveSpeed()
+		);
+
+		
+		
+	    }
+	}
+	
 		{ // decelerate over time
 			let progression = Math.min(1, this.fadeFactor * delta);
 			let attenuation = Math.max(0, 1 - this.fadeFactor * delta);
