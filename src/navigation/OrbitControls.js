@@ -38,7 +38,10 @@ export class OrbitControls extends EventDispatcher{
 		this.panDelta = new THREE.Vector2(0, 0);
 		this.radiusDelta = 0;
 
-		this.tweens = [];
+	    this.tweens = [];
+
+	    this.sixDofSpeed = 0;
+	    this.updateBaselineSpeed();
 
 		let drag = (e) => {
 			if (e.drag.object !== null) {
@@ -210,7 +213,8 @@ export class OrbitControls extends EventDispatcher{
 				this.scene.view.position.z = (1 - t) * startPos.z + t * targetPos.z;
 
 				this.scene.view.radius = (1 - t) * startRadius + t * targetRadius;
-				this.viewer.setMoveSpeed(this.scene.view.radius / 2.5);
+			    this.viewer.setMoveSpeed(this.scene.view.radius / 2.5);
+			    this.updateBaselineSpeed();
 			});
 
 			tween.onComplete(() => {
@@ -273,42 +277,50 @@ export class OrbitControls extends EventDispatcher{
 
 		{
 			let speed = view.radius / 2.5;
-			this.viewer.setMoveSpeed(speed);
+		    this.viewer.setMoveSpeed(speed);
 		}
 
 
 
 	{
 	    // 6-axis
-
 	    let gamepad = navigator.getGamepads()[0];
 	    if (gamepad !== null) {
-		var deadzone = function(x) {
-		    var dead = .04;
-		    return Math.max((Math.abs(x) - dead) / (1 - dead), 0) * (x > 0 ? 1 : -1);
+		// recalibrate an axis reading (-1 to 1) to account for a deadzone in the center;
+		// the edges of the deadzone are remapped to 0
+		var normalize = function(x, deadzone) {
+		    var deadzone = deadzone || .04;
+		    return Math.max((Math.abs(x) - deadzone) / (1 - deadzone), 0) * (x > 0 ? 1 : -1);
 		}
 		
-		let forward = -deadzone(gamepad.axes[1]);
-		let right = deadzone(gamepad.axes[0]);
-		let up = -deadzone(gamepad.axes[2]);
-		let pitch = deadzone(gamepad.axes[3]);
-		let roll = -deadzone(gamepad.axes[4]);
-		let yaw = deadzone(gamepad.axes[5]);
+		let forward = -normalize(gamepad.axes[1]);
+		let right = normalize(gamepad.axes[0]);
+		let up = -normalize(gamepad.axes[2]);
+		let pitch = normalize(gamepad.axes[3]);
+		let roll = -normalize(gamepad.axes[4], .3);
+		let yaw = normalize(gamepad.axes[5]);
 		
 		//console.log(forward, right, up, pitch, roll, yaw);
-
+		
 		view.yaw -= yaw * delta;
 		view.pitch += pitch * delta;
 
+		// since the z-axis is locked, use roll to control acceleration
+		// (alternatively, can set speed automatically based on z-distance from pivot or surface)
+		var accelSensitivity = 2.5;
+		this.sixDofSpeed *= Math.exp(roll * delta * accelSensitivity);
+		if (roll != 0) {
+		    console.log("new speed:", this.sixDofSpeed);
+		}
+		
 		let dir = view.direction;
 		dir.z = 0;
 		dir.normalize();
-		let side = new THREE.Vector2(dir.y, -dir.x);
-
+		let side = new THREE.Vector2(dir.y, -dir.x);		
 		view.translateWorld(
-		    (forward * dir.x + right * side.x) * delta * this.viewer.getMoveSpeed(),
-		    (forward * dir.y + right * side.y) * delta * this.viewer.getMoveSpeed(),
-		    up * delta * this.viewer.getMoveSpeed()
+		    (forward * dir.x + right * side.x) * delta * this.sixDofSpeed,
+		    (forward * dir.y + right * side.y) * delta * this.sixDofSpeed,
+		    up * delta * this.sixDofSpeed
 		);
 
 		
@@ -326,5 +338,11 @@ export class OrbitControls extends EventDispatcher{
 			// this.radiusDelta *= attenuation;
 			this.radiusDelta -= progression * this.radiusDelta;
 		}
-	}
+    }
+
+    updateBaselineSpeed() {
+	this.sixDofSpeed = 25 * this.viewer.getMoveSpeed();
+	console.log("new speed:", this.sixDofSpeed);
+    }
+
 };
