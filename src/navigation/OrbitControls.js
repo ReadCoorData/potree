@@ -307,7 +307,7 @@ export class OrbitControls extends EventDispatcher{
 		    var lock_horizon = false;
 		    var norm = function(x, deadzone) { return normalize(x, deadzone || .02); };		    
 		    var forward = -norm(gamepad.axes[1]);
-		    var right = norm(gamepad.axes[0]);
+		    var right = norm(gamepad.axes[0], .1);
 		    // assumes pressure-sensitive rear shoulder buttons
 		    var up = gamepad.buttons[7].value - gamepad.buttons[6].value;
 		    // use default inverted axis
