@@ -36,11 +36,11 @@ var mobile = mobileRegex.test(navigator.userAgent);
 if (mobile) console.log('Using mobile settings');
 
 var defaults = {
-    pointBudget: mobile ? 700 * 1000 : 3.5 * 1000 * 1000,
-    edlEnabled: !mobile,
+    pointBudget: mobile ? 700 * 1000 : 10 * 1000 * 1000,
+    edlEnabled: false,
     edlStrength: 0.4,
     edlRadius: 1.4,
-    pointSize: 3,
+    pointSize: 1,
     pointType: Potree.PointSizeType.FIXED,
     pointShape: Potree.PointShape.SQUARE,
     material: Potree.PointColorType.RGB,

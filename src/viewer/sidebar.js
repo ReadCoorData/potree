@@ -51,7 +51,7 @@ export class Sidebar{
 		this.initAccordion();
 		this.initAppearance();
 		this.initToolbar();
-		this.initScene();
+		//this.initScene();
 		this.initNavigation();
 		this.initFilters();
 		this.initClippingTool();
@@ -869,6 +869,7 @@ export class Sidebar{
 			slide: (event, ui) => { this.viewer.setPointBudget(ui.value); }
 		});
 
+	    /*
 		$('#sldFOV').slider({
 			value: this.viewer.getFOV(),
 			min: 20,
@@ -892,12 +893,14 @@ export class Sidebar{
 			step: 0.01,
 			slide: (event, ui) => { this.viewer.setEDLStrength(ui.value); }
 		});
+*/
 
 		this.viewer.addEventListener('point_budget_changed', (event) => {
 			$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
 			$('#sldPointBudget').slider({value: this.viewer.getPointBudget()});
 		});
 
+	    /*
 		this.viewer.addEventListener('fov_changed', (event) => {
 			$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
 			$('#sldFOV').slider({value: this.viewer.getFOV()});
@@ -913,12 +916,18 @@ export class Sidebar{
 			$('#sldEDLStrength').slider({value: this.viewer.getEDLStrength()});
 		});
 
+
 		this.viewer.addEventListener('background_changed', (event) => {
 			$("input[name=background][value='" + this.viewer.getBackground() + "']").prop('checked', true);
 		});
 
-		$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
-		$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
+*/
+
+	        $('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
+
+	    /*
+
+	    $('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
 		$('#lblEDLRadius')[0].innerHTML = this.viewer.getEDLRadius().toFixed(1);
 		$('#lblEDLStrength')[0].innerHTML = this.viewer.getEDLStrength().toFixed(1);
 		$('#chkEDLEnabled')[0].checked = this.viewer.getEDLEnabled();
@@ -938,6 +947,7 @@ export class Sidebar{
 		$('#chkEDLEnabled').click( () => {
 			this.viewer.setEDLEnabled($('#chkEDLEnabled').prop("checked"));
 		});
+*/
 	}
 
 	initNavigation(){
@@ -1076,6 +1086,7 @@ export class Sidebar{
 
 	initSettings(){
 
+	    /*
 		{
 			$('#sldMinNodeSize').slider({
 				value: this.viewer.getMinNodeSize(),
@@ -1107,7 +1118,6 @@ export class Sidebar{
 			let currentQuality = this.viewer.useHQ ? "hq" : "standard";
 			elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
 		}
-
 		$('#show_bounding_box').click(() => {
 			this.viewer.setShowBoundingBox($('#show_bounding_box').prop("checked"));
 		});
@@ -1115,6 +1125,7 @@ export class Sidebar{
 		$('#set_freeze').click(() => {
 			this.viewer.setFreeze($('#set_freeze').prop("checked"));
 		});
+*/
 	}
 
 }
