@@ -196,6 +196,7 @@ export class Sidebar{
 			}
 		));
 
+	    /*
 		// PROFILE
 		elToolbar.append(this.createToolIcon(
 			Potree.resourcePath + '/icons/profile.svg',
@@ -210,6 +211,7 @@ export class Sidebar{
 				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
+*/
 
 		// REMOVE ALL
 		elToolbar.append(this.createToolIcon(
@@ -688,8 +690,8 @@ export class Sidebar{
 
 	initFilters(){
 		this.initClassificationList();
-		this.initReturnFilters();
-		this.initGPSTimeFilters();
+		//this.initReturnFilters();
+		//this.initGPSTimeFilters();
 
 	}
 
@@ -1041,7 +1043,7 @@ export class Sidebar{
 
 
 
-
+/*
 		let elCameraProjection = $(`
 			<selectgroup id="camera_projection_options">
 				<option id="camera_projection_options_perspective" value="PERSPECTIVE">Perspective</option>
@@ -1081,6 +1083,7 @@ export class Sidebar{
 		});
 
 		lblMoveSpeed.html(this.viewer.getMoveSpeed().toFixed(1));
+*/
 	}
 
 
@@ -1102,7 +1105,7 @@ export class Sidebar{
 			});
 			$('#lblMinNodeSize').html(parseInt(this.viewer.getMinNodeSize()));
 		}
-
+*/
 		{
 			let elSplatQuality = $("#splat_quality_options");
 			elSplatQuality.selectgroup({title: "Splat Quality"});
@@ -1118,6 +1121,7 @@ export class Sidebar{
 			let currentQuality = this.viewer.useHQ ? "hq" : "standard";
 			elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
 		}
+	    /*
 		$('#show_bounding_box').click(() => {
 			this.viewer.setShowBoundingBox($('#show_bounding_box').prop("checked"));
 		});
