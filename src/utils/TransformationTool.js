@@ -53,10 +53,11 @@ export class TransformationTool {
 			"translation.y": {name: "translation.y", node:  new THREE.Object3D(), color: green, alignment: [0, 1, 0]},
 			"translation.z": {name: "translation.z", node:  new THREE.Object3D(), color: blue, alignment: [0, 0, 1]},
 		};
-		this.rotationHandles = {
-			"rotation.x": {name: "rotation.x", node:  new THREE.Object3D(), color: red, alignment: [1, 0, 0]},
-			"rotation.y": {name: "rotation.y", node:  new THREE.Object3D(), color: green, alignment: [0, 1, 0]},
-			"rotation.z": {name: "rotation.z", node:  new THREE.Object3D(), color: blue, alignment: [0, 0, 1]},
+	    this.rotationHandles = {
+		// disable rotation of the volume
+			//"rotation.x": {name: "rotation.x", node:  new THREE.Object3D(), color: red, alignment: [1, 0, 0]},
+			//"rotation.y": {name: "rotation.y", node:  new THREE.Object3D(), color: green, alignment: [0, 1, 0]},
+			//"rotation.z": {name: "rotation.z", node:  new THREE.Object3D(), color: blue, alignment: [0, 0, 1]},
 		};
 		this.handles = Object.assign({}, this.scaleHandles, this.focusHandles, this.translationHandles, this.rotationHandles);
 		this.pickVolumes = [];
@@ -623,7 +624,7 @@ export class TransformationTool {
 				let diffScale = new THREE.Vector3(...handle.alignment).multiplyScalar(diff.length() * direction * dragDirection);
 				let diffPosition = diff.clone().multiplyScalar(0.5);
 
-				for (let selection of this.selection) {
+			    for (let selection of this.selection) {
 					selection.scale.add(diffScale);
 					selection.scale.x = Math.max(0.1, selection.scale.x);
 					selection.scale.y = Math.max(0.1, selection.scale.y);
@@ -734,8 +735,7 @@ export class TransformationTool {
 
 	update () {
 
-		if(this.selection.length === 1){
-
+	    if(this.selection.length === 1){
 			this.scene.visible = true;
 
 			this.scene.updateMatrix();
@@ -785,11 +785,15 @@ export class TransformationTool {
 				if(!this.dragging){
 					let tWorld = this.scene.matrixWorld;
 					let tObject = new THREE.Matrix4().getInverse(tWorld)
-					let camObjectPos = camera.getWorldPosition(new THREE.Vector3()).applyMatrix4(tObject);
-
-					let x = this.rotationHandles["rotation.x"].node.rotation;
-					let y = this.rotationHandles["rotation.y"].node.rotation;
-					let z = this.rotationHandles["rotation.z"].node.rotation;
+				    let camObjectPos = camera.getWorldPosition(new THREE.Vector3()).applyMatrix4(tObject);
+				    
+				    let dummyRotation = new THREE.Object3D().rotation;
+				    let x = dummyRotation;
+				    let y = dummyRotation;
+				    let z = dummyRotation;
+				    //let x = this.rotationHandles["rotation.x"].node.rotation;
+				    //let y = this.rotationHandles["rotation.y"].node.rotation;
+				    //let z = this.rotationHandles["rotation.z"].node.rotation;
 
 					x.order = "ZYX";
 					y.order = "ZYX";
