@@ -638,6 +638,7 @@ export class Sidebar{
 			}
 		));
 
+	    /*
 		// CLIP POLYGON
 		clippingToolBar.append(this.createToolIcon(
 			Potree.resourcePath + "/icons/clip-polygon.svg",
@@ -674,6 +675,7 @@ export class Sidebar{
 				}
 			));
 		}
+*/
 
 		{ // REMOVE CLIPPING TOOLS
 			clippingToolBar.append(this.createToolIcon(
