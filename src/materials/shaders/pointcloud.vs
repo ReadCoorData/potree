@@ -695,7 +695,9 @@ void doClipping(){
 
 	if(clipMethod == CLIPMETHOD_INSIDE_ANY){
 		if(insideAny && clipTask == CLIPTASK_HIGHLIGHT){
-			vColor.r += 0.5;
+			vColor.r = 1. - vColor.r;
+			vColor.g = 1. - vColor.g;
+			vColor.b = 1. - vColor.b;
 		}else if(!insideAny && clipTask == CLIPTASK_SHOW_INSIDE){
 			gl_Position = vec4(100.0, 100.0, 100.0, 1.0);
 		}else if(insideAny && clipTask == CLIPTASK_SHOW_OUTSIDE){
