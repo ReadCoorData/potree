@@ -90,13 +90,19 @@ export class VolumeTool extends EventDispatcher{
 				this.viewer.scene.pointclouds, 
 				{pickClipped: false});
 
-			if (I) {
+		    if (I) {
 				volume.position.copy(I.location);
 
 				let wp = volume.getWorldPosition(new THREE.Vector3()).applyMatrix4(camera.matrixWorldInverse);
 				// let pp = new THREE.Vector4(wp.x, wp.y, wp.z).applyMatrix4(camera.projectionMatrix);
-				let w = Math.abs((wp.z / 5));
-				volume.scale.set(w, w, w);
+			let w = Math.abs((wp.z / 5));
+
+			let worldBound = this.viewer.scene.pointclouds[0].pcoGeometry.tightBoundingBox;
+			let height = worldBound.max.z - worldBound.min.z;
+			let zCenter = (worldBound.min.z + worldBound.max.z) / 2;
+			
+			volume.scale.set(w, w, height);
+			volume.position.z = zCenter;
 			}
 		};
 
