@@ -598,7 +598,7 @@ export class Sidebar{
 
 		{
 			let elClipTask = $("#cliptask_options");
-			elClipTask.selectgroup({title: "Clip Task"});
+			elClipTask.selectgroup({title: ""});
 
 			elClipTask.find("input").click( (e) => {
 				this.viewer.setClipTask(ClipTask[e.target.value]);
@@ -683,7 +683,9 @@ export class Sidebar{
 				"[title]tt.remove_all_measurement",
 				() => {
 
-					this.viewer.scene.removeAllClipVolumes();
+				    this.viewer.scene.removeAllClipVolumes();
+				    $("#cliptask_options").find('input[value=\'HIGHLIGHT\']').trigger("click");
+
 				}
 			));
 		}
