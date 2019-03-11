@@ -142,7 +142,12 @@ let attributeLocations = {
 	"indices": 7,
 	"normal": 8,
 	"spacing": 9,
-	"gpsTime": 10,
+    "gpsTime": 10,
+    "channel0": 11,
+    "channel1": 12,
+    "channel2": 13,
+    "channel3": 14,
+    "channel4": 15,
 };
 
 class Shader {
@@ -258,7 +263,7 @@ class Shader {
 
 				for (let i = 0; i < numUniforms; i++) {
 					let uniform = gl.getActiveUniform(program, i);
-
+				    
 					let location = gl.getUniformLocation(program, uniform.name);
 
 					this.uniformLocations[uniform.name] = location;
@@ -354,6 +359,46 @@ class Shader {
 		//}
 
 		//gl.uniform1f(location, value);
+	}
+
+    setUniform1fv(name, value) {
+		const gl = this.gl;
+		const uniform = this.uniforms[name + '[0]'];
+
+		if (uniform === undefined) {
+			return;
+		}
+
+	// need to update for array comparison -- but is this really worth the overhead vs.
+	// updating uniforms each frame?
+	//if(uniform.value === value){
+	//		return;
+	//	}
+
+	uniform.value = value;
+
+	gl.uniform1fv(uniform.location, value);
+	}
+
+    setUniform3fv(name, value) {
+	value = value.map(function(e){return [e.x, e.y, e.z]}).reduce(function(a,b){return $.merge(a,b)});
+	
+		const gl = this.gl;
+		const uniform = this.uniforms[name + '[0]'];
+
+		if (uniform === undefined) {
+			return;
+		}
+
+	// need to update for array comparison -- but is this really worth the overhead vs.
+	// updating uniforms each frame?
+	//if(uniform.value === value){
+	//		return;
+	//	}
+
+		uniform.value = value;
+
+		gl.uniform3fv(uniform.location, value);
 	}
 
 	setUniformBoolean(name, value) {
@@ -558,7 +603,7 @@ export class Renderer {
 
 		gl.bindVertexArray(webglBuffer.vao);
 
-		for(let attributeName in geometry.attributes){
+	    for(let attributeName in geometry.attributes){
 			let bufferAttribute = geometry.attributes[attributeName];
 
 			let vbo = gl.createBuffer();
@@ -894,7 +939,6 @@ export class Renderer {
 	}
 
 	renderOctree(octree, nodes, camera, target, params = {}){
-
 		let gl = this.gl;
 
 		let material = params.material ? params.material : octree.material;
@@ -1082,7 +1126,13 @@ export class Renderer {
 			shader.setUniform1f("fov", Math.PI * camera.fov / 180);
 			shader.setUniform1f("near", camera.near);
 			shader.setUniform1f("far", camera.far);
-			
+
+		    shader.setUniform1fv("clampMin", material.uniforms.clampMin.value);
+		    shader.setUniform1fv("clampMax", material.uniforms.clampMax.value);
+		    shader.setUniform1fv("minBrightness", material.uniforms.minBrightness.value);
+		    shader.setUniform1fv("channelWeight", material.uniforms.channelWeight.value);
+		    shader.setUniform3fv("channelColor", material.uniforms.channelColor.value);
+		    
 			if(camera instanceof THREE.OrthographicCamera){
 				shader.setUniform("uUseOrthographicCamera", true);
 				shader.setUniform("uOrthoWidth", camera.right - camera.left); 

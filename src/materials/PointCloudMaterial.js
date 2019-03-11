@@ -66,10 +66,26 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 			returnNumber: { type: 'f', value: [] },
 			numberOfReturns: { type: 'f', value: [] },
 			pointSourceID: { type: 'f', value: [] },
-			indices: { type: 'fv', value: [] }
+		    indices: { type: 'fv', value: [] },
+		    channel0: { type: 'f', value: [] },
+		    channel1: { type: 'f', value: [] },
+		    channel2: { type: 'f', value: [] },
+		    channel3: { type: 'f', value: [] },
+		    channel4: { type: 'f', value: [] },
 		};
 
-		this.uniforms = {
+	    this.uniforms = {
+		clampMin: { type: "fv", value: [0,0,0,0,0]},
+		clampMax: { type: "fv", value: [256,256,256,50,1]},
+		minBrightness: { type: "fv", value: [0,0,0,.1,0]},
+		channelWeight: { type: "fv", value: [1,1,1,1,0]},
+		channelColor: { type: "v3v", value: [
+		    new THREE.Vector3(1,0,0),
+		    new THREE.Vector3(0,1,0), 
+		    new THREE.Vector3(0,0,1), 
+		    new THREE.Vector3(1,1,0), 
+                    new THREE.Vector3(1,0,1)
+		]},
 			level:				{ type: "f", value: 0.0 },
 			vnStart:			{ type: "f", value: 0.0 },
 			spacing:			{ type: "f", value: 1.0 },
@@ -134,7 +150,7 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 			uFilterNumberOfReturnsRange:	{ type: "fv", value: [0, 7]},
 			uFilterGPSTimeClipRange:		{ type: "fv", value: [0, 7]},
 		};
-
+	    
 		this.classification = ClassificationScheme.DEFAULT;
 
 		this.defaultAttributeValues.normal = [0, 0, 0];

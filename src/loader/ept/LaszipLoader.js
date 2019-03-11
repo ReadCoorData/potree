@@ -134,10 +134,23 @@ export class EptLazBatcher {
 			g.addAttribute('pointSourceID',
 					new THREE.BufferAttribute(pointSourceIDs, 1));
 			g.addAttribute('indices',
-					new THREE.BufferAttribute(indices, 4));
+				       new THREE.BufferAttribute(indices, 4));
+		    g.attributes.indices.normalized = true;
+		
+		    let chR = new Float32Array(colors.length / 4);
+		    let chG = new Float32Array(colors.length / 4);
+		    let chB = new Float32Array(colors.length / 4);
+		    for (let i = 0; i < colors.length; i += 4) {
+			chR[i / 4] = colors[i];
+			chG[i / 4] = colors[i+1];
+			chB[i / 4] = colors[i+2];
+		    }
 
-			g.attributes.indices.normalized = true;
-
+		    g.addAttribute('channel0', new THREE.BufferAttribute(chR, 1));
+		    g.addAttribute('channel1', new THREE.BufferAttribute(chG, 1));
+		    g.addAttribute('channel2', new THREE.BufferAttribute(chB, 1));
+		    g.addAttribute('channel3', new THREE.BufferAttribute(new Float32Array(e.data.intensity), 1));
+			
 			let tightBoundingBox = new THREE.Box3(
 				new THREE.Vector3().fromArray(e.data.tightBoundingBox.min),
 				new THREE.Vector3().fromArray(e.data.tightBoundingBox.max)
