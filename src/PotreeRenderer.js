@@ -381,7 +381,7 @@ class Shader {
 	}
 
     setUniform3fv(name, value) {
-	value = value.map(function(e){return [e.x, e.y, e.z]}).reduce(function(a,b){return $.merge(a,b)});
+	value = value.map(function(e){return [e.r, e.g, e.b]}).reduce(function(a,b){return $.merge(a,b)});
 	
 		const gl = this.gl;
 		const uniform = this.uniforms[name + '[0]'];

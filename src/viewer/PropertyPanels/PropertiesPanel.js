@@ -73,6 +73,10 @@ export class PropertiesPanel{
 
 		let panel = $(`
 			<div class="scene_content selectable">
+
+<div id="channel-settings"></div>
+
+
 				<ul class="pv-menu-list">
 
 				<li>
@@ -211,6 +215,76 @@ export class PropertiesPanel{
 			</div>
 		`);
 
+	    let initChannelSettings = function(i) {
+		let subpanel = $(`
+	    
+					<div class="divider">
+						<span>Channel ${i}</span>
+					</div>
+				<ul class="pv-menu-list">
+					<li>Range: <span id="lblrange"></span> <div id="sldrange"></div>	</li>
+					<li>Min Brightness: <span id="lblminbright"></span> <div id="sldminbright"></div>	</li>
+					<li><input id="channel.color.picker" /></li>
+					<li>Weight: <span id="lblweight"></span> <div id="sldweight"></div>	</li>
+</ul>
+`);
+
+
+		    subpanel.find('#sldrange').slider({
+			range: true,
+			values: [
+			    material.uniforms.clampMin.value[i],
+			    material.uniforms.clampMax.value[i]
+			],
+				min: 0, max: 256, step: 1.,
+			slide: (event, ui) => {
+			    material.uniforms.clampMin.value[i] = ui.values[0];
+			    material.uniforms.clampMax.value[i] = ui.values[1];
+			}
+			});
+		    subpanel.find('#sldminbright').slider({
+			value: material.uniforms.minBrightness.value[i],
+				min: 0, max: 1, step: .01,
+			slide: (event, ui) => {
+			    material.uniforms.minBrightness.value[i] = ui.value;
+			}
+		    });
+		    subpanel.find('#sldweight').slider({
+			value: material.uniforms.channelWeight.value[i],
+				min: 0, max: 1, step: .01,
+			slide: (event, ui) => {
+			    material.uniforms.channelWeight.value[i] = ui.value;
+			}
+			});
+
+			subpanel.find(`#channel\\.color\\.picker`).spectrum({
+				flat: true,
+				showInput: true,
+				preferredFormat: 'rgb',
+				cancelText: '',
+				chooseText: 'Apply',
+				color: `#${material.uniforms.channelColor.value[i].getHexString()}`,
+				move: color => {
+					let cRGB = color.toRgb();
+					let tc = new THREE.Color().setRGB(cRGB.r / 255, cRGB.g / 255, cRGB.b / 255);
+					material.uniforms.channelColor.value[i] = tc;
+				},
+				change: color => {
+					let cRGB = color.toRgb();
+					let tc = new THREE.Color().setRGB(cRGB.r / 255, cRGB.g / 255, cRGB.b / 255);
+					material.uniforms.channelColor.value[i] = tc;
+				}
+			});
+
+
+		
+		panel.find('#channel-settings').append(subpanel);
+		
+	    }
+	    for (let chnum = 0; chnum < 4; chnum++) {
+		initChannelSettings(chnum);
+	    }
+	    
 		panel.i18n();
 		this.container.append(panel);
 
@@ -405,7 +479,8 @@ export class PropertiesPanel{
 		}
 
 		{
-			panel.find('#sldRGBGamma').slider({
+
+		    panel.find('#sldRGBGamma').slider({
 				value: material.rgbGamma,
 				min: 0, max: 4, step: 0.01,
 				slide: (event, ui) => {material.rgbGamma = ui.value}

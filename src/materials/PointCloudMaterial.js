@@ -80,11 +80,11 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 		minBrightness: { type: "fv", value: [0,0,0,.1,0]},
 		channelWeight: { type: "fv", value: [1,1,1,1,0]},
 		channelColor: { type: "v3v", value: [
-		    new THREE.Vector3(1,0,0),
-		    new THREE.Vector3(0,1,0), 
-		    new THREE.Vector3(0,0,1), 
-		    new THREE.Vector3(1,1,0), 
-                    new THREE.Vector3(1,0,1)
+		    new THREE.Color(1,0,0),
+		    new THREE.Color(0,1,0), 
+		    new THREE.Color(0,0,1), 
+		    new THREE.Color(1,1,0), 
+                    new THREE.Color(1,0,1)
 		]},
 			level:				{ type: "f", value: 0.0 },
 			vnStart:			{ type: "f", value: 0.0 },

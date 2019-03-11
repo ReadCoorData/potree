@@ -213,6 +213,12 @@ export class HQSplatRenderer{
 				attributeMaterial.setClipBoxes(material.clipBoxes);
 				attributeMaterial.setClipPolygons(material.clipPolygons);
 
+			    attributeMaterial.uniforms.clampMin.value = [...material.uniforms.clampMin.value];
+			    attributeMaterial.uniforms.clampMax.value = [...material.uniforms.clampMax.value];
+			    attributeMaterial.uniforms.minBrightness.value = [...material.uniforms.minBrightness.value];
+			    attributeMaterial.uniforms.channelWeight.value = [...material.uniforms.channelWeight.value];
+			    attributeMaterial.uniforms.channelColor.value = [...material.uniforms.channelColor.value];
+			    
 				pointcloud.material = attributeMaterial;
 			}
 			
