@@ -76,6 +76,9 @@ export class PropertiesPanel{
 
 <div id="channel-settings"></div>
 
+				<div class="divider">
+					<span>Size / Shape</span>
+				</div>
 
 				<ul class="pv-menu-list">
 

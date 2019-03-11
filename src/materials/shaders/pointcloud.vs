@@ -457,23 +457,6 @@ vec3 getSourceID(){
 	return texture2D(gradient, vec2(w,1.0 - w)).rgb;
 }
 
-vec4 getChannel(float val, int i) {
-     float minVal = clampMin[i];
-     float maxVal = clampMax[i];
-     float minBright = minBrightness[i];
-     vec3 refColor = channelColor[i];
-     float weight = channelWeight[i];
-
-     float stretchedVal = (val - minVal) / (maxVal - minVal);
-     if (stretchedVal < 0.) {
-     	return vec4(0., 0., 0., 0.);
-     } 
-     stretchedVal = clamp(stretchedVal, 0., 1.);
-     float brightness = mix(minBright, 1., stretchedVal);
-     // no gamma for now
-     return vec4(refColor * brightness, 1.) * weight;
-}
-
 vec3 getCompositeColor(){
 	vec3 c;
 	float w;
@@ -519,18 +502,38 @@ vec3 getCompositeColor(){
 // 
 
 
+vec4 getChannel(float val, int i) {
+     float minVal = clampMin[i];
+     float maxVal = clampMax[i];
+     float minBright = minBrightness[i];
+     vec3 refColor = channelColor[i];
+     float weight = channelWeight[i];
 
-vec3 getColor(){
+     float stretchedVal = (val - minVal) / (maxVal - minVal);
+     if (stretchedVal < 0.) {
+     	return vec4(0., 0., 0., 0.);
+     } 
+     stretchedVal = clamp(stretchedVal, 0., 1.);
+     float brightness = mix(minBright, 1., stretchedVal);
+     // no gamma for now
+     return vec4(refColor * brightness, 1.) * weight;
+}
 
-     vec4 allChannels =
+vec4 getAllChannels() {
+   return
           getChannel(channel0, 0) +
      	  getChannel(channel1, 1) +
      	  getChannel(channel2, 2) +
      	  getChannel(channel3, 3) +
      	  getChannel(channel4, 4)
 	  ;
+}
+
+vec3 getColor(){
+     vec4 allChannels = getAllChannels();
      if (allChannels.a == 0.) {
-     	gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
+        // not working in hq mode???
+      	gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
      }
      return allChannels.rgb;
 
@@ -783,7 +786,6 @@ void main() {
 	// COLOR
 	vColor = getColor();
 
-
 	#if defined hq_depth_pass
 		float originalDepth = gl_Position.w;
 		float adjustedDepth = originalDepth + 2.0 * vRadius;
@@ -792,7 +794,6 @@ void main() {
 		mvPosition.xyz = mvPosition.xyz * adjust;
 		gl_Position = projectionMatrix * mvPosition;
 	#endif
-
 
 	// CLIPPING
 	doClipping();
