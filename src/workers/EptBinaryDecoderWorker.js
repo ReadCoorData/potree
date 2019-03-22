@@ -118,6 +118,43 @@ onmessage = function(event) {
 		pointSourceIdExtractor = getExtractor('PointSourceId');
 	}
 
+
+    let channelBuffers = [];
+    let channels = [];
+    let channelExtractors = [];
+    let channelDims = [];
+    for (let dimName in dimensions) {
+	if (dimName == 'X' || dimName == 'Y' || dimName == 'Z') {
+	    continue;
+	}
+	let dim = dimensions[dimName];
+	channelDims.push(dim);
+
+	let buf = new ArrayBuffer(numPoints * dim.size);
+	let data = null;
+	if (dim.type == 'signed') switch (dim.size) {
+	    case 1: data = new Int8Array(buf); break;
+	    case 2: data = new Int16Array(buf); break;
+	    case 4: data = new Int32Array(buf); break;
+	    //case 8: data = new Int64Array(buf); break;
+	}
+	if (dim.type == 'unsigned') switch (dim.size) {
+	    case 1: data = new Uint8Array(buf); break;
+	    case 2: data = new Uint16Array(buf); break;
+	    case 4: data = new Uint32Array(buf); break;
+	    //case 8: data = new Uint64Array(buf); break;
+	}
+	if (dim.type == 'float') switch (dim.size) {
+	    case 4: data = new Float32Array(buf); break;
+	    case 8: data = new Float64Array(buf); break;
+	}
+	let extractor = getExtractor(dimName);
+
+	channelBuffers.push(buf);
+	channels.push(data);
+	channelExtractors.push(extractor);
+    }
+    
 	let mean = [0, 0, 0];
 	let bounds = {
 		min: [Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE],
@@ -125,8 +162,15 @@ onmessage = function(event) {
 	};
 
 	let x, y, z, r, g, b;
-	for (let i = 0; i < numPoints; ++i) {
+    for (let i = 0; i < numPoints; ++i) {
 		let pos = i * pointSize;
+
+
+	
+	for (let ch = 0; ch < channels.length; ch++) {
+	    channels[ch][i] = channelExtractors[ch](pos);
+	}
+	
 		if (xyz) {
 			x = xyzExtractor[0](pos) * scale.x + offset.x - mins[0];
 			y = xyzExtractor[1](pos) * scale.y + offset.y - mins[1];
@@ -190,7 +234,9 @@ onmessage = function(event) {
 		returnNumber: returnNumberBuffer,
 		numberOfReturns: numberOfReturnsBuffer,
 		pointSourceId: pointSourceIdBuffer,
-		indices: indicesBuffer
+	    indices: indicesBuffer,
+	    channels: channelBuffers,
+	    channelTypes: channelDims,
 	};
 
 	let transferables = [
@@ -201,8 +247,9 @@ onmessage = function(event) {
 		message.returnNumber,
 		message.numberOfReturns,
 		message.pointSourceId,
-		message.indices
-	].filter((v) => v);
+	    message.indices
+	].concat(message.channels)
+	.filter((v) => v);
 
 	postMessage(message, transferables);
 }
