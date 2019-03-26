@@ -7,7 +7,8 @@ onmessage = function(event) {
 	let scale = event.data.scale;
 	let offset = event.data.offset;
 	let mins = event.data.mins;
-
+    let channelNames = event.data.channels;
+    
 	let dimensions = schema.reduce((p, c) => {
 		p[c.name] = c;
 		return p;
@@ -119,16 +120,18 @@ onmessage = function(event) {
 	}
 
 
+
+    
+
     let channelBuffers = [];
     let channels = [];
     let channelExtractors = [];
-    let channelDims = [];
+
     for (let dimName in dimensions) {
-	if (dimName == 'X' || dimName == 'Y' || dimName == 'Z') {
+	if (channelNames.indexOf(dimName) == -1) {
 	    continue;
 	}
 	let dim = dimensions[dimName];
-	channelDims.push(dim);
 
 	let buf = new ArrayBuffer(numPoints * dim.size);
 	let data = null;
@@ -236,7 +239,6 @@ onmessage = function(event) {
 		pointSourceId: pointSourceIdBuffer,
 	    indices: indicesBuffer,
 	    channels: channelBuffers,
-	    channelTypes: channelDims,
 	};
 
 	let transferables = [

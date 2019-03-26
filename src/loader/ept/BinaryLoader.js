@@ -34,6 +34,19 @@ export class EptBinaryLoader {
 			'/workers/EptBinaryDecoderWorker.js';
 		let worker = Potree.workerPool.getWorker(workerPath);
 
+	    let channelsExclude = ['X', 'Y', 'Z', 'Red', 'Green', 'Blue', 'Intensity', 'Classification', 'ReturnNumber', 'NumberOfReturns', 'PointSourceId'];
+	    let dimNames = node.ept.schema.reduce((p, c) => {
+		let name = c.name;
+		if (channelsExclude.indexOf(name) == -1) {
+		    p.push(c.name);
+		}
+		return p;
+	    }, []);
+	    	let dimensions = node.ept.schema.reduce((p, c) => {
+		p[c.name] = c;
+		return p;
+	}, { });
+	    
 		worker.onmessage = function(e) {
 			let g = new THREE.BufferGeometry();
 			let numPoints = e.data.numPoints;
@@ -78,7 +91,7 @@ export class EptBinaryLoader {
 			g.attributes.indices.normalized = true;
 
 		    for (let i = 0; i < e.data.channels.length; i++) {
-			let dim = e.data.channelTypes[i];
+			let dim = dimensions[dimNames[i]];
 			let buf = e.data.channels[i];
 			let data = null;
 			if (dim.type == 'signed') switch (dim.size) {
@@ -114,12 +127,14 @@ export class EptBinaryLoader {
 			Potree.workerPool.returnWorker(workerPath, worker);
 		};
 
+
 		let toArray = (v) => [v.x, v.y, v.z];
 		let message = {
 			buffer: buffer,
 			schema: node.ept.schema,
 			scale: node.ept.eptScale,
-			offset: node.ept.eptOffset,
+		    offset: node.ept.eptOffset,
+		    channels: dimNames,
 			mins: toArray(node.key.b.min)
 		};
 
