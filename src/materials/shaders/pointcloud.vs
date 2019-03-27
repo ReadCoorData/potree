@@ -16,17 +16,25 @@ attribute vec4 indices;
 attribute float spacing;
 attribute float gpsTime;
 
+// TODO generate the shader code with a template for # of channels needed?
+// what is the max and do lots of unused channels affect performance?
+// alternatively, can handle in bulk via a texture
 attribute float channel0;
 attribute float channel1;
 attribute float channel2;
 attribute float channel3;
 attribute float channel4;
+attribute float channel5;
+attribute float channel6;
+attribute float channel7;
+attribute float channel8;
+attribute float channel9;
 
-uniform float clampMin[5];
-uniform float clampMax[5];
-uniform float minBrightness[5];
-uniform vec3 channelColor[5];
-uniform float channelWeight[5];
+uniform float clampMin[10];
+uniform float clampMax[10];
+uniform float minBrightness[10];
+uniform vec3 channelColor[10];
+uniform float channelWeight[10];
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
@@ -525,7 +533,12 @@ vec4 getAllChannels() {
      	  getChannel(channel1, 1) +
      	  getChannel(channel2, 2) +
      	  getChannel(channel3, 3) +
-     	  getChannel(channel4, 4)
+     	  getChannel(channel3, 4) +
+     	  getChannel(channel3, 5) +
+     	  getChannel(channel3, 6) +
+     	  getChannel(channel3, 7) +
+     	  getChannel(channel3, 8) +
+     	  getChannel(channel4, 9)
 	  ;
 }
 

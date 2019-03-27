@@ -34,7 +34,7 @@ export class EptBinaryLoader {
 			'/workers/EptBinaryDecoderWorker.js';
 		let worker = Potree.workerPool.getWorker(workerPath);
 
-	    let channelsExclude = ['X', 'Y', 'Z', 'Red', 'Green', 'Blue', 'Intensity', 'Classification', 'ReturnNumber', 'NumberOfReturns', 'PointSourceId'];
+	    let channelsExclude = ['X', 'Y', 'Z']; //, 'Red', 'Green', 'Blue', 'Intensity', 'Classification', 'ReturnNumber', 'NumberOfReturns', 'PointSourceId'];
 	    let dimNames = node.ept.schema.reduce((p, c) => {
 		let name = c.name;
 		if (channelsExclude.indexOf(name) == -1) {
