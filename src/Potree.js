@@ -125,8 +125,24 @@ export function loadPointCloud(path, name, callback){
 
 			    for (var i = 0; i < 10; i++) {
 				let name = geometry.channelNames[i];
-				pointcloud.material.uniforms.channelWeight.value[i] = (name ? 1 : 0);
-				// TODO set clamp max
+				let dim = geometry.channelDefs[name];
+				pointcloud.material.uniforms.channelWeight.value[i] = (dim ? 1 : 0);
+				if (dim) {
+				    let clampMin = 0, clampMax = null;
+				    if (dim.type == 'signed' || dim.type == 'unsigned') {
+					clampMax = Math.pow(2, 8*dim.size);
+					if (dim.type == 'signed') {
+					    clampMin = -clampMax / 2;
+					    clampMax = clampMax / 2 -1;
+					}
+				    }
+				    if (dim.type == 'float') {
+					clampMax = 1000000; // FIXME
+				    }
+				    console.log(name, clampMin, clampMax);
+				    pointcloud.material.uniforms.clampMin.value[i] = clampMin;
+				    pointcloud.material.uniforms.clampMax.value[i] = clampMax;
+				}
 			    }
 			    
 			    

@@ -232,14 +232,14 @@ export class PropertiesPanel{
 </ul>
 `);
 
-
+		// log if min 0 and max > 256
 		    subpanel.find('#sldrange').slider({
 			range: true,
 			values: [
 			    material.uniforms.clampMin.value[i],
 			    material.uniforms.clampMax.value[i]
 			],
-				min: 0, max: 256, step: 1.,
+				min: material.uniforms.clampMin.value[i], max: material.uniforms.clampMax.value[i], step: 1.,
 			slide: (event, ui) => {
 			    material.uniforms.clampMin.value[i] = ui.values[0];
 			    material.uniforms.clampMax.value[i] = ui.values[1];

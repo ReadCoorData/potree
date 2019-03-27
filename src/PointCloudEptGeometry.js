@@ -78,7 +78,7 @@ export class PointCloudEptGeometry {
 		return p;
 	    }, []);
 	    if (dataType != 'binary') {
-		channelNames = ['Intensity'];
+		this.channelNames = ['Intensity'];
 	    }
 	    	this.channelDefs = schema.reduce((p, c) => {
 		p[c.name] = c;
