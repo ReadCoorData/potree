@@ -218,11 +218,11 @@ export class PropertiesPanel{
 			</div>
 		`);
 
-	    let initChannelSettings = function(i) {
+	    let initChannelSettings = function(i, name) {
 		let subpanel = $(`
 	    
 					<div class="divider">
-						<span>Channel ${i}</span>
+						<span>${name}</span>
 					</div>
 				<ul class="pv-menu-list">
 					<li>Range: <span id="lblrange"></span> <div id="sldrange"></div>	</li>
@@ -284,8 +284,8 @@ export class PropertiesPanel{
 		panel.find('#channel-settings').append(subpanel);
 		
 	    }
-	    for (let chnum = 0; chnum < 4; chnum++) {
-		initChannelSettings(chnum);
+	    for (let chnum = 0; chnum < pointcloud.pcoGeometry.channelNames.length; chnum++) {
+		initChannelSettings(chnum, pointcloud.pcoGeometry.channelNames[chnum]);
 	    }
 	    
 		panel.i18n();

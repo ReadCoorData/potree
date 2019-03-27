@@ -74,17 +74,23 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 		    channel4: { type: 'f', value: [] },
 		};
 
+	    let maxChannels = 10;
 	    this.uniforms = {
-		clampMin: { type: "fv", value: [0,0,0,0,0]},
-		clampMax: { type: "fv", value: [256,256,256,50,1]},
-		minBrightness: { type: "fv", value: [0,0,0,.1,0]},
-		channelWeight: { type: "fv", value: [1,1,1,1,0]},
-		channelColor: { type: "v3v", value: [
-		    new THREE.Color(1,0,0),
-		    new THREE.Color(0,1,0), 
-		    new THREE.Color(0,0,1), 
-		    new THREE.Color(1,1,0), 
-                    new THREE.Color(1,0,1)
+		clampMin: { type: "fv", value: new Array(maxChannels).fill(0)},
+		clampMax: { type: "fv", value: new Array(maxChannels).fill(0)}, // must be set based on datatype
+		minBrightness: { type: "fv", value: new Array(maxChannels).fill(.1)},
+		channelWeight: { type: "fv", value: new Array(maxChannels).fill(0)}, // must be activated for # of channels present in data
+ 		channelColor: { type: "v3v", value: [
+		    new THREE.Color(1,0,0), // red
+		    new THREE.Color(0,1,0), // green
+		    new THREE.Color(0,.5,1), // sky blue
+		    new THREE.Color(1,1,0), // yellow
+                    new THREE.Color(1,.5,0), // orange
+		    new THREE.Color(0,1,.75), // teal
+                    new THREE.Color(.5,0,1), // violet
+		    new THREE.Color(0,0,1), // deep blue
+		    new THREE.Color(1,0,1), // magenta
+		    new THREE.Color(0,1,1), // cyan
 		]},
 			level:				{ type: "f", value: 0.0 },
 			vnStart:			{ type: "f", value: 0.0 },

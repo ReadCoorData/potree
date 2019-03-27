@@ -67,8 +67,24 @@ export class PointCloudEptGeometry {
 			(this.boundingBox.max.x - this.boundingBox.min.x) / this.span;
 
 		let hierarchyType = info.hierarchyType || 'json';
-
 		let dataType = info.dataType || 'laszip';
+
+	    let channelsExclude = ['X', 'Y', 'Z']; //, 'Red', 'Green', 'Blue', 'Intensity', 'Classification', 'ReturnNumber', 'NumberOfReturns', 'PointSourceId';
+	    this.channelNames = schema.reduce((p, c) => {
+		let name = c.name;
+		if (channelsExclude.indexOf(name) == -1) {
+		    p.push(c.name);
+		}
+		return p;
+	    }, []);
+	    if (dataType != 'binary') {
+		channelNames = ['Intensity'];
+	    }
+	    	this.channelDefs = schema.reduce((p, c) => {
+		p[c.name] = c;
+		return p;
+	}, { });
+	    
 		this.loader = dataType == 'binary'
 			? new Potree.EptBinaryLoader()
 			: new Potree.EptLaszipLoader();

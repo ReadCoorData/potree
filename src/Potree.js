@@ -121,7 +121,15 @@ export function loadPointCloud(path, name, callback){
 				console.error(new Error(`failed to load point cloud from URL: ${path}`));
 			}
 			else {
-				let pointcloud = new PointCloudOctree(geometry);
+			    let pointcloud = new PointCloudOctree(geometry);
+
+			    for (var i = 0; i < 10; i++) {
+				let name = geometry.channelNames[i];
+				pointcloud.material.uniforms.channelWeight.value[i] = (name ? 1 : 0);
+				// TODO set clamp max
+			    }
+			    
+			    
 				loaded(pointcloud);
 			}
 		});
