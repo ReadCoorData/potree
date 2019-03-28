@@ -264,6 +264,23 @@ var set = (k, v) => {
     }
 };
 
+/*
+supported channel attributes:
+clampMin - range low cutoff
+clampMax - range high cutoff
+channelColor - base color for channel, as THREE.Color object, e.g., new THREE.Color(1,1,0) for yellow
+minBrightness - minimum brightness [0.0-1.0] of value at the low cutoff, e.g., 0% = black, 10% = 10/90 blend of black and base color
+channelWeight - scaling factor [0.0-1.0] for the channel's color before mixing with other channels; lower this if lots of channels
+  present and aggregate color is getting blown out. 0 = de-activate channel entirely
+*/
+function setChannelProperties(pointcloud, dict, ix) {
+    ix = ix || 0;
+    Object.keys(dict).forEach(propname => {
+	let value = dict[propname];
+	pointcloud.material.uniforms[propname].value[ix] = value;
+    });
+}
+
 var queryConfig = function() {
     // Extract configuration params from the query string.
     var result = { };

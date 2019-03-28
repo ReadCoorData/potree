@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>Potree Viewer</title>
+
+	<link rel="stylesheet" type="text/css" href="../build/potree/potree.css">
+	<link rel="stylesheet" type="text/css" href="../libs/jquery-ui/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="../libs/perfect-scrollbar/css/perfect-scrollbar.css">
+	<link rel="stylesheet" type="text/css" href="../libs/openlayers3/ol.css">
+	<link rel="stylesheet" type="text/css" href="../libs/spectrum/spectrum.css">
+	<link rel="stylesheet" type="text/css" href="../libs/jstree/themes/mixed/style.css">
+    <link rel="stylesheet" href="../css/entwine.css" type="text/css">
+</head>
+<body>
+	<script src="../libs/jquery/jquery-3.1.1.min.js"></script>
+	<script src="../libs/spectrum/spectrum.js"></script>
+	<script src="../libs/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
+	<script src="../libs/jquery-ui/jquery-ui.min.js"></script>
+	<script src="../libs/three.js/build/three.min.js"></script>
+	<script src="../libs/other/BinaryHeap.js"></script>
+	<script src="../libs/tween/tween.min.js"></script>
+	<script src="../libs/d3/d3.js"></script>
+	<script src="../libs/proj4/proj4.js"></script>
+	<script src="../libs/openlayers3/ol.js"></script>
+	<script src="../libs/i18next/i18next.js"></script>
+	<script src="../libs/jstree/jstree.js"></script>
+	<script src="../build/potree/potree.js"></script>
+	<script src="../libs/plasio/js/laslaz.js"></script>
+    <script src="../libs/clipboard.min.js" type="text/javascript"></script>
+    <div id="potree_container">
+		<div id="potree_render_area"></div>
+		<div id="potree_sidebar_container"></div>
+	</div>
+    <a href="/" id="entwine_logo_container">
+        <img id="entwine_logo" src="/resources/images/entwine-logo.png"/>
+    </a>
+
+    <script type="text/javascript" src="../js/script.js"></script>
+    <script type="text/javascript">
+
+        window.viewer = new Potree.Viewer(document.getElementById("potree_render_area"));
+
+        Potree.loadPointCloud('http://na.entwine.io/readcoor/genes/fgfap-blue/ept.json', 'fgfap blue', (result) => {
+            console.log('Loaded fgfap blue')
+   	    setChannelProperties(result.pointcloud, {
+	        channelColor: new THREE.Color("rgb(42, 42, 130)"),
+	        clampMax: 256,
+	    });
+            viewer.scene.addPointCloud(result.pointcloud);
+            Potree.loadPointCloud('http://na.entwine.io/readcoor/genes/fgfap-green/ept.json', 'fgfap green', (result) => {
+                console.log('Loaded fgfap green')
+   	    setChannelProperties(result.pointcloud, {
+	        channelColor: new THREE.Color("rgb(80, 255, 56)"),
+	        clampMax: 256,
+	    });
+                viewer.scene.addPointCloud(result.pointcloud);
+                Potree.loadPointCloud('http://na.entwine.io/readcoor/quad-2/blue/ept.json', 'apoe', (result) => {
+                    console.log('Loaded blue')
+   	    setChannelProperties(result.pointcloud, {
+	        channelColor: new THREE.Color("rgb(42, 42, 130)"),
+	        clampMax: 256,
+	    });
+                    viewer.scene.addPointCloud(result.pointcloud);
+                    Potree.loadPointCloud('http://na.entwine.io/readcoor/quad-2/yellow/ept.json', 'snap25', (result) => {
+                        console.log('Loaded yellow')
+   	    setChannelProperties(result.pointcloud, {
+	        channelColor: new THREE.Color("rgb(241, 241, 173)"),
+	        clampMax: 256,
+	    });
+                        viewer.scene.addPointCloud(result.pointcloud);
+                        Potree.loadPointCloud('http://na.entwine.io/readcoor/quad-2/green/ept.json', 'gfap', (result) => {
+                            console.log('Loaded green')
+   	    setChannelProperties(result.pointcloud, {
+	        channelColor: new THREE.Color("rgb(80, 255, 56)"),
+	        clampMax: 256,
+	    });
+                            viewer.scene.addPointCloud(result.pointcloud);
+                            Potree.loadPointCloud('http://na.entwine.io/readcoor/quad-2/red/ept.json', 'Syn1', (result) => {
+                                console.log('Loaded red')
+   	    setChannelProperties(result.pointcloud, {
+	        channelColor: new THREE.Color("rgb(228, 77, 77)"),
+	        clampMax: 256,
+	    });
+                                viewer.scene.addPointCloud(result.pointcloud);
+                                init()
+                            })
+                        })
+                    })
+                })
+            })
+        })
+
+        function init() {
+            viewer.loadGUI(() => {
+                viewer.setLanguage('en');
+                $("#menu_appearance").next().show();
+                $("#menu_scene").next().show();
+                if (name) $("a:contains('" + name + "')").click();
+            });
+
+            viewer.useHQ = true
+            viewer.setEDLEnabled(true)
+
+            let ps = 6
+
+            let fgblue = viewer.scene.pointclouds[0]
+            fgblue.material.size = ps
+            fgblue.material.pointSizeType = Potree.PointSizeType.ATTENTUATED
+
+            let fggreen = viewer.scene.pointclouds[1]
+            fggreen.material.size = ps
+            fggreen.material.pointSizeType = Potree.PointSizeType.ATTENTUATED
+
+            let blue = viewer.scene.pointclouds[2]
+            blue.material.size = ps
+            blue.material.pointSizeType = Potree.PointSizeType.ATTENTUATED
+
+            let yellow = viewer.scene.pointclouds[3]
+            yellow.material.size = ps
+            yellow.material.pointSizeType = Potree.PointSizeType.ATTENTUATED
+
+            let green = viewer.scene.pointclouds[4]
+            green.material.size = ps
+            green.material.pointSizeType = Potree.PointSizeType.ATTENTUATED
+
+            let red = viewer.scene.pointclouds[5]
+            red.material.size = ps
+            red.material.pointSizeType = Potree.PointSizeType.ATTENTUATED
+
+            let pos = [2686.787, 35609.574, 30004.626]
+            let tgt = [2680.659, 21573.290, 6105.365]
+
+            viewer.scene.view.position.set(pos[0], pos[1], pos[2])
+            viewer.scene.view.lookAt(new THREE.Vector3(tgt[0], tgt[1], tgt[2]))
+        }
+    </script>
+  </body>
+</html>
+
+

@@ -133,11 +133,11 @@ export function loadPointCloud(path, name, callback){
 					clampMax = Math.pow(2, 8*dim.size);
 					if (dim.type == 'signed') {
 					    clampMin = -clampMax / 2;
-					    clampMax = clampMax / 2 -1;
+					    clampMax = clampMax / 2 - 1;
 					}
 				    }
 				    if (dim.type == 'float') {
-					clampMax = 1000000; // FIXME
+					clampMax = 1000000; // FIXME -- what should the default be here?
 				    }
 				    console.log(name, clampMin, clampMax);
 				    pointcloud.material.uniforms.clampMin.value[i] = clampMin;
