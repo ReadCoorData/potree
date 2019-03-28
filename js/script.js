@@ -266,8 +266,8 @@ var set = (k, v) => {
 
 /*
 supported channel attributes:
-clampMin - range low cutoff
-clampMax - range high cutoff
+clampMin - range low cutoff; values below this not rendered (if all channels below cutoff, point is hidden)
+clampMax - range high cutoff; values above this set to max brightness
 channelColor - base color for channel, as THREE.Color object, e.g., new THREE.Color(1,1,0) for yellow
 minBrightness - minimum brightness [0.0-1.0] of value at the low cutoff, e.g., 0% = black, 10% = 10/90 blend of black and base color
 channelWeight - scaling factor [0.0-1.0] for the channel's color before mixing with other channels; lower this if lots of channels
@@ -374,6 +374,8 @@ var init = (name) => {
     else r = ''
     history.replaceState(null, null, location.pathname + r);
 
+    (config.postLoad || (()=>{}))(viewer);
+    
     console.log('Loading UI');
 
     viewer.loadGUI(() => {
@@ -417,9 +419,10 @@ resources.forEach((p, i) => {
     Potree.loadPointCloud(path, name, (e) => {
         pcs[i] = e.pointcloud;
         console.log('Loaded', name, i);
-        viewer.scene.addPointCloud(e.pointcloud);
 
         if (pcs.every((v) => v)) {
+	    // only add once all pointclouds are available to ensure deterministic ordering
+	    pcs.forEach((p, i) => viewer.scene.addPointCloud(p));
             console.log('All point clouds loaded');
             init(resources.length == 1 ? name : null);
         }
