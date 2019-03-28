@@ -527,8 +527,8 @@ vec4 getChannel(float val, int i) {
      return vec4(refColor * brightness, 1.) * weight;
 }
 
-vec3 getAllChannels() {
-   vec4 sum = 
+vec4 getRawChannels() {
+   return  
           getChannel(channel0, 0) +
      	  getChannel(channel1, 1) +
      	  getChannel(channel2, 2) +
@@ -540,7 +540,10 @@ vec3 getAllChannels() {
      	  getChannel(channel8, 8) +
      	  getChannel(channel9, 9)
 	  ;
+}
 
+vec3 getAllChannels() {
+     vec4 sum = getRawChannels();
     if (sum.a == 0.) {
         // not working in hq mode???
       	gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
