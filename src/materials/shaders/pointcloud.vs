@@ -527,32 +527,28 @@ vec4 getChannel(float val, int i) {
      return vec4(refColor * brightness, 1.) * weight;
 }
 
-vec4 getAllChannels() {
-   return
+vec3 getAllChannels() {
+   vec4 sum = 
           getChannel(channel0, 0) +
      	  getChannel(channel1, 1) +
      	  getChannel(channel2, 2) +
      	  getChannel(channel3, 3) +
-     	  getChannel(channel3, 4) +
-     	  getChannel(channel3, 5) +
-     	  getChannel(channel3, 6) +
-     	  getChannel(channel3, 7) +
-     	  getChannel(channel3, 8) +
-     	  getChannel(channel4, 9)
+     	  getChannel(channel4, 4) +
+     	  getChannel(channel5, 5) +
+     	  getChannel(channel6, 6) +
+     	  getChannel(channel7, 7) +
+     	  getChannel(channel8, 8) +
+     	  getChannel(channel9, 9)
 	  ;
-}
 
-vec3 getColor(){
-     vec4 allChannels = getAllChannels();
-     if (allChannels.a == 0.) {
+    if (sum.a == 0.) {
         // not working in hq mode???
       	gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
      }
-     return allChannels.rgb;
+     return sum.rgb;
+}
 
-
-
-
+vec3 getColor(){
 	vec3 color;
 	
 	#ifdef color_type_rgb
@@ -596,6 +592,8 @@ vec3 getColor(){
 		color = color;
 	#elif defined color_type_composite
 		color = getCompositeColor();
+	#elif defined color_type_channels
+	      color = getAllChannels();
 	#endif
 	
 	return color;

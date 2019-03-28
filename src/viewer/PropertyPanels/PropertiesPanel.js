@@ -403,7 +403,8 @@ export class PropertiesPanel{
 		}
 
 		{
-			let options = [
+		    let options = [
+			'Multi-channel',
 				'RGB',
 				'RGB and Elevation',
 				'Color',

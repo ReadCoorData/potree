@@ -302,6 +302,8 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 			defines.push('#define color_type_gpstime');
 		} else if (this._pointColorType === PointColorType.COMPOSITE) {
 			defines.push('#define color_type_composite');
+		} else if (this._pointColorType === PointColorType.CHANNELS) {
+			defines.push('#define color_type_channels');
 		}
 		
 		if(this._treeType === TreeType.OCTREE){
