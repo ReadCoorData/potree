@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>Potree Viewer</title>
+
+	<link rel="stylesheet" type="text/css" href="/build/potree/potree.css">
+	<link rel="stylesheet" type="text/css" href="/libs/jquery-ui/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="/libs/perfect-scrollbar/css/perfect-scrollbar.css">
+	<link rel="stylesheet" type="text/css" href="/libs/openlayers3/ol.css">
+	<link rel="stylesheet" type="text/css" href="/libs/spectrum/spectrum.css">
+	<link rel="stylesheet" type="text/css" href="/libs/jstree/themes/mixed/style.css">
+    <link rel="stylesheet" href="/css/entwine.css" type="text/css">
+</head>
+<body>
+	<script src="/libs/jquery/jquery-3.1.1.min.js"></script>
+	<script src="/libs/spectrum/spectrum.js"></script>
+	<script src="/libs/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
+	<script src="/libs/jquery-ui/jquery-ui.min.js"></script>
+	<script src="/libs/three.js/build/three.min.js"></script>
+	<script src="/libs/other/BinaryHeap.js"></script>
+	<script src="/libs/tween/tween.min.js"></script>
+	<script src="/libs/d3/d3.js"></script>
+	<script src="/libs/proj4/proj4.js"></script>
+	<script src="/libs/openlayers3/ol.js"></script>
+	<script src="/libs/i18next/i18next.js"></script>
+	<script src="/libs/jstree/jstree.js"></script>
+	<script src="/build/potree/potree.js"></script>
+	<script src="/libs/plasio/js/laslaz.js"></script>
+    <script src="/libs/clipboard.min.js" type="text/javascript"></script>
+    <div id="potree_container">
+		<div id="potree_render_area"></div>
+		<div id="potree_sidebar_container"></div>
+	</div>
+    <a href="/" id="entwine_logo_container">
+        <img id="entwine_logo" src="/resources/images/entwine-logo.png"/>
+    </a>
+
+    <script type="text/javascript">
+
+        window.viewer = new Potree.Viewer(document.getElementById("potree_render_area"))
+
+        var queryParam = function(name) {
+            name = name.replace(/[\[\]]/g, '\\$&')
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+            var results = regex.exec(window.location.href)
+            if (!results) return null
+            if (!results[2]) return true
+
+            return JSON.parse(
+                decodeURIComponent(results[2].replace(/\+/g, ' ')))
+        }
+
+        ;(async function() {
+            const load = async (url, name) => new Promise((resolve) => {
+                Potree.loadPointCloud(url, name, o => {
+                    viewer.scene.addPointCloud(o.pointcloud)
+                    resolve(o.pointcloud)
+                })
+            })
+
+            const init = async () => new Promise((resolve) =>
+                viewer.loadGUI(resolve)
+            )
+
+            const configure = (pc, ps, ir) => {
+                const m = pc.material
+                m.pointColorType = Potree.PointColorType.COMPOSITE
+                m.weightIntensity = 1
+                m.weightRgb = 1
+                m.intensityRange = ir || [0, 256]
+                m.size = ps
+                m.pointSizeType = Potree.PointSizeType.FIXED
+            }
+
+            const root = 'http://na.entwine.io/readcoor/v9c'
+
+            const apoe = await load(`${root}/apoe/ept.json`, 'apoe')
+            const gfap = await load(`${root}/gfap/ept.json`, 'gfap')
+            const snap = await load(`${root}/snap/ept.json`, 'snap25')
+            const syn1 = await load(`${root}/syn1/ept.json`, 'syn1')
+            const micr = await load(`${root}/microglia/ept.json`, 'microglia')
+            const astr = await load(`${root}/astrocyte/ept.json`, 'astrocyte')
+
+            await init()
+
+            viewer.setPointBudget(3000000)
+            viewer.setLanguage('en')
+            $("#menu_appearance").next().show()
+            $("#menu_scene").next().show()
+
+            viewer.useHQ = true
+            viewer.setEDLEnabled(true)
+
+            const sm = 4
+            const lg = 8
+            configure(apoe, lg, [0, 20]) // cyan
+            configure(gfap, lg, [0, 38]) // green
+            configure(snap, lg, [0, 20]) // white
+            configure(syn1, lg, [0, 38]) // red
+            configure(micr, sm, [84, 256]) // yellow
+            configure(astr, sm, [75, 146]) // blue
+
+            if (typeof(Storage) != 'undefined') {
+                const pb = parseInt(localStorage.getItem('pointBudget'))
+                if (Number.isInteger(pb)) {
+                    console.log('Setting pointBudget from localStorage')
+                    viewer.setPointBudget(pb)
+                }
+                viewer.addEventListener('point_budget_changed', (e) => {
+                    if (typeof(Storage) !== 'undefined') {
+                        console.log('Storing pointBudget');
+                        localStorage.setItem(
+                            'pointBudget',
+                            viewer.getPointBudget()
+                        )
+                    }
+                });
+            }
+
+            const pos = queryParam('p') || [12794.263, 10843.792, 13436.510]
+            const tgt = queryParam('t') || [5759.500, 10879.500, 40.500]
+
+            viewer.scene.view.position.set(pos[0], pos[1], pos[2])
+            viewer.scene.view.lookAt(new THREE.Vector3(tgt[0], tgt[1], tgt[2]))
+
+            const str = a => '[' + a.map(v => v.toFixed(3).toString()) + ']'
+            let qpos = str(pos)
+            let qtgt = str(tgt)
+
+            let last = new Date()
+            let handle = null
+
+            const set = () => {
+                handle = null
+
+                const npos = str(viewer.scene.view.position.toArray())
+                const ntgt = str(viewer.scene.view.getPivot().toArray())
+
+                if (npos == qpos && ntgt == qtgt) return
+
+                last = new Date()
+
+                qpos = npos
+                qtgt = ntgt
+
+                const qs = '?p=' + qpos + '&t=' + qtgt
+                if (window.history) window.history.replaceState({ }, null, qs)
+            }
+
+            viewer.addEventListener('camera_changed', (c) => {
+                if (handle) clearTimeout(handle)
+
+                if (new Date() - last > 100) set()
+                else handle = setTimeout(set, 100)
+            })
+        })()
+    </script>
+  </body>
+</html>
+
