@@ -42,92 +42,60 @@
 
     <script type="text/javascript">
 
-        window.viewer = new Potree.Viewer(document.getElementById("potree_render_area"))
+      window.config = {
+      resource: [
+      'http://na.entwine.io/readcoor/v9c/apoe/ept.json',
+      'http://na.entwine.io/readcoor/v9c/gfap/ept.json',
+      'http://na.entwine.io/readcoor/v9c/snap/ept.json',
+      'http://na.entwine.io/readcoor/v9c/syn1/ept.json',
+      'http://na.entwine.io/readcoor/v9c/microglia/ept.json',
+      'http://na.entwine.io/readcoor/v9c/astrocyte/ept.json',
+      ],
+      pointSize: 8,
+      pointBudget: 3000000,
+      edlEnabled: true,
+          pointType: Potree.PointSizeType.FIXED,
+          material: Potree.PointColorType.CHANNELS,
+          hq: true,
+          position:  [12794.263, 10843.792, 13436.510],
+          target: [5759.500, 10879.500, 40.500],
+      postLoad: (viewer) => {
+      let pcs = viewer.scene.pointclouds;
+   	    setChannelProperties(pcs[0], {
+	        channelColor: new THREE.Color("rgb(0,255,255)"),
+	        clampMax: 20,
+	    });
+   	    setChannelProperties(pcs[1], {
+	        channelColor: new THREE.Color("rgb(0,192,0)"),
+	        clampMax: 38,
+	    });
+   	    setChannelProperties(pcs[2], {
+	        channelColor: new THREE.Color("rgb(192,192,192)"),
+	        clampMax: 20,
+	    });
+   	    setChannelProperties(pcs[3], {
+	        channelColor: new THREE.Color("rgb(255,0,0)"),
+	        clampMax: 38,
+	    });
+      pcs[4].material.size = 4;
+   	    setChannelProperties(pcs[4], {
+	        channelColor: new THREE.Color("rgb(255,255,0)"),
+      clampMin: 84,
+      clampMax: 256,
+	    });
+      pcs[5].material.size = 4;
+   	    setChannelProperties(pcs[5], {
+	        channelColor: new THREE.Color("rgb(158,125,255)"),
+      clampMin: 75,
+	        clampMax: 146,
+      });
+          },
+      };
 
-        var queryParam = function(name) {
-            name = name.replace(/[\[\]]/g, '\\$&')
-            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-            var results = regex.exec(window.location.href)
-            if (!results) return null
-            if (!results[2]) return true
+      
+      
 
-            return JSON.parse(
-                decodeURIComponent(results[2].replace(/\+/g, ' ')))
-        }
-
-        ;(async function() {
-            const load = async (url, name) => new Promise((resolve) => {
-                Potree.loadPointCloud(url, name, o => {
-                    viewer.scene.addPointCloud(o.pointcloud)
-                    resolve(o.pointcloud)
-                })
-            })
-
-            const init = async () => new Promise((resolve) =>
-                viewer.loadGUI(resolve)
-            )
-
-            const configure = (pc, ps, ir) => {
-                const m = pc.material
-                m.pointColorType = Potree.PointColorType.COMPOSITE
-                m.weightIntensity = 1
-                m.weightRgb = 1
-                m.intensityRange = ir || [0, 256]
-                m.size = ps
-                m.pointSizeType = Potree.PointSizeType.FIXED
-            }
-
-            const root = 'http://na.entwine.io/readcoor/v9c'
-
-            const apoe = await load(`${root}/apoe/ept.json`, 'apoe')
-            const gfap = await load(`${root}/gfap/ept.json`, 'gfap')
-            const snap = await load(`${root}/snap/ept.json`, 'snap25')
-            const syn1 = await load(`${root}/syn1/ept.json`, 'syn1')
-            const micr = await load(`${root}/microglia/ept.json`, 'microglia')
-            const astr = await load(`${root}/astrocyte/ept.json`, 'astrocyte')
-
-            await init()
-
-            viewer.setPointBudget(3000000)
-            viewer.setLanguage('en')
-            $("#menu_appearance").next().show()
-            $("#menu_scene").next().show()
-
-            viewer.useHQ = true
-            viewer.setEDLEnabled(true)
-
-            const sm = 4
-            const lg = 8
-            configure(apoe, lg, [0, 20]) // cyan
-            configure(gfap, lg, [0, 38]) // green
-            configure(snap, lg, [0, 20]) // white
-            configure(syn1, lg, [0, 38]) // red
-            configure(micr, sm, [84, 256]) // yellow
-            configure(astr, sm, [75, 146]) // blue
-
-            if (typeof(Storage) != 'undefined') {
-                const pb = parseInt(localStorage.getItem('pointBudget'))
-                if (Number.isInteger(pb)) {
-                    console.log('Setting pointBudget from localStorage')
-                    viewer.setPointBudget(pb)
-                }
-                viewer.addEventListener('point_budget_changed', (e) => {
-                    if (typeof(Storage) !== 'undefined') {
-                        console.log('Storing pointBudget');
-                        localStorage.setItem(
-                            'pointBudget',
-                            viewer.getPointBudget()
-                        )
-                    }
-                });
-            }
-
-            const pos = queryParam('p') || [12794.263, 10843.792, 13436.510]
-            const tgt = queryParam('t') || [5759.500, 10879.500, 40.500]
-
-            viewer.scene.view.position.set(pos[0], pos[1], pos[2])
-            viewer.scene.view.lookAt(new THREE.Vector3(tgt[0], tgt[1], tgt[2]))
-
+      /*
             const str = a => '[' + a.map(v => v.toFixed(3).toString()) + ']'
             let qpos = str(pos)
             let qtgt = str(tgt)
@@ -158,8 +126,11 @@
                 if (new Date() - last > 100) set()
                 else handle = setTimeout(set, 100)
             })
-        })()
+      })()
+      */
     </script>
+    <script type="text/javascript" src="../js/script.js"></script>
+
   </body>
 </html>
 
