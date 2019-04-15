@@ -51,7 +51,7 @@ export class Sidebar{
 		this.initAccordion();
 		this.initAppearance();
 		this.initToolbar();
-		this.initScene();
+		//this.initScene();
 		this.initNavigation();
 		this.initFilters();
 		this.initClippingTool();
@@ -196,6 +196,7 @@ export class Sidebar{
 			}
 		));
 
+	    /*
 		// PROFILE
 		elToolbar.append(this.createToolIcon(
 			Potree.resourcePath + '/icons/profile.svg',
@@ -210,6 +211,7 @@ export class Sidebar{
 				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
+*/
 
 		// REMOVE ALL
 		elToolbar.append(this.createToolIcon(
@@ -596,7 +598,7 @@ export class Sidebar{
 
 		{
 			let elClipTask = $("#cliptask_options");
-			elClipTask.selectgroup({title: "Clip Task"});
+			elClipTask.selectgroup({title: ""});
 
 			elClipTask.find("input").click( (e) => {
 				this.viewer.setClipTask(ClipTask[e.target.value]);
@@ -636,6 +638,7 @@ export class Sidebar{
 			}
 		));
 
+	    /*
 		// CLIP POLYGON
 		clippingToolBar.append(this.createToolIcon(
 			Potree.resourcePath + "/icons/clip-polygon.svg",
@@ -672,6 +675,7 @@ export class Sidebar{
 				}
 			));
 		}
+*/
 
 		{ // REMOVE CLIPPING TOOLS
 			clippingToolBar.append(this.createToolIcon(
@@ -679,7 +683,9 @@ export class Sidebar{
 				"[title]tt.remove_all_measurement",
 				() => {
 
-					this.viewer.scene.removeAllClipVolumes();
+				    this.viewer.scene.removeAllClipVolumes();
+				    $("#cliptask_options").find('input[value=\'HIGHLIGHT\']').trigger("click");
+
 				}
 			));
 		}
@@ -688,8 +694,8 @@ export class Sidebar{
 
 	initFilters(){
 		this.initClassificationList();
-		this.initReturnFilters();
-		this.initGPSTimeFilters();
+		//this.initReturnFilters();
+		//this.initGPSTimeFilters();
 
 	}
 
@@ -869,6 +875,7 @@ export class Sidebar{
 			slide: (event, ui) => { this.viewer.setPointBudget(ui.value); }
 		});
 
+	    /*
 		$('#sldFOV').slider({
 			value: this.viewer.getFOV(),
 			min: 20,
@@ -892,12 +899,14 @@ export class Sidebar{
 			step: 0.01,
 			slide: (event, ui) => { this.viewer.setEDLStrength(ui.value); }
 		});
+*/
 
 		this.viewer.addEventListener('point_budget_changed', (event) => {
 			$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
 			$('#sldPointBudget').slider({value: this.viewer.getPointBudget()});
 		});
 
+	    /*
 		this.viewer.addEventListener('fov_changed', (event) => {
 			$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
 			$('#sldFOV').slider({value: this.viewer.getFOV()});
@@ -913,12 +922,18 @@ export class Sidebar{
 			$('#sldEDLStrength').slider({value: this.viewer.getEDLStrength()});
 		});
 
+
 		this.viewer.addEventListener('background_changed', (event) => {
 			$("input[name=background][value='" + this.viewer.getBackground() + "']").prop('checked', true);
 		});
 
-		$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
-		$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
+*/
+
+	        $('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
+
+	    /*
+
+	    $('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
 		$('#lblEDLRadius')[0].innerHTML = this.viewer.getEDLRadius().toFixed(1);
 		$('#lblEDLStrength')[0].innerHTML = this.viewer.getEDLStrength().toFixed(1);
 		$('#chkEDLEnabled')[0].checked = this.viewer.getEDLEnabled();
@@ -938,6 +953,7 @@ export class Sidebar{
 		$('#chkEDLEnabled').click( () => {
 			this.viewer.setEDLEnabled($('#chkEDLEnabled').prop("checked"));
 		});
+*/
 	}
 
 	initNavigation(){
@@ -1031,7 +1047,7 @@ export class Sidebar{
 
 
 
-
+/*
 		let elCameraProjection = $(`
 			<selectgroup id="camera_projection_options">
 				<option id="camera_projection_options_perspective" value="PERSPECTIVE">Perspective</option>
@@ -1071,11 +1087,13 @@ export class Sidebar{
 		});
 
 		lblMoveSpeed.html(this.viewer.getMoveSpeed().toFixed(1));
+*/
 	}
 
 
 	initSettings(){
 
+	    /*
 		{
 			$('#sldMinNodeSize').slider({
 				value: this.viewer.getMinNodeSize(),
@@ -1091,7 +1109,7 @@ export class Sidebar{
 			});
 			$('#lblMinNodeSize').html(parseInt(this.viewer.getMinNodeSize()));
 		}
-
+*/
 		{
 			let elSplatQuality = $("#splat_quality_options");
 			elSplatQuality.selectgroup({title: "Splat Quality"});
@@ -1107,7 +1125,7 @@ export class Sidebar{
 			let currentQuality = this.viewer.useHQ ? "hq" : "standard";
 			elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
 		}
-
+	    /*
 		$('#show_bounding_box').click(() => {
 			this.viewer.setShowBoundingBox($('#show_bounding_box').prop("checked"));
 		});
@@ -1115,6 +1133,7 @@ export class Sidebar{
 		$('#set_freeze').click(() => {
 			this.viewer.setFreeze($('#set_freeze').prop("checked"));
 		});
+*/
 	}
 
 }
