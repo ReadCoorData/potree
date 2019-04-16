@@ -109,14 +109,15 @@
 }
 
 #potree_sidebar_container{
-	position:	absolute;
+    position:	absolute;
+    right: 0px;
 	z-index:	0;
 	width:		350px;
 	height:		100%;
 	overflow-y:	auto;
 	font-size:	85%;
 	overflow: 	hidden;
-	border-right:	1px solid black;
+	border-left:	1px solid black;
 }
 
 .potree_sidebar_brand{
@@ -132,8 +133,9 @@
 }
 
 .potree_menu_toggle{
-	position:		absolute;
-	float:			left;
+    position:		absolute;
+    right: 0px;
+	float:			right;
 	margin:			8px 8px;
 	background:		none;
 	width:			2.5em;
@@ -165,6 +167,8 @@
 	z-index: 	1;
 	-webkit-transition: left .35s;
 	transition: left .35s;
+	-webkit-transition: right .35s;
+	transition: right .35s;
 }
 
 .potree-panel {

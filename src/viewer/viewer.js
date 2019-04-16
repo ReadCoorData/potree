@@ -949,12 +949,12 @@ export class Viewer extends EventDispatcher{
 
 	toggleSidebar () {
 		let renderArea = $('#potree_render_area');
-		let isVisible = renderArea.css('left') !== '0px';
+		let isVisible = renderArea.css('right') !== '0px';
 
 		if (isVisible) {
-			renderArea.css('left', '0px');
+			renderArea.css('right', '0px');
 		} else {
-			renderArea.css('left', '300px');
+			renderArea.css('right', '300px');
 		}
 	};
 
