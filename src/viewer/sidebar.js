@@ -922,7 +922,6 @@ export class Sidebar{
 			$('#sldEDLStrength').slider({value: this.viewer.getEDLStrength()});
 		});
 
-
 		this.viewer.addEventListener('background_changed', (event) => {
 			$("input[name=background][value='" + this.viewer.getBackground() + "']").prop('checked', true);
 		});
@@ -936,8 +935,9 @@ export class Sidebar{
 	    $('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
 		$('#lblEDLRadius')[0].innerHTML = this.viewer.getEDLRadius().toFixed(1);
 		$('#lblEDLStrength')[0].innerHTML = this.viewer.getEDLStrength().toFixed(1);
+*/
 		$('#chkEDLEnabled')[0].checked = this.viewer.getEDLEnabled();
-		
+/*		
 		{
 			let elBackground = $(`#background_options`);
 			elBackground.selectgroup();
@@ -949,11 +949,10 @@ export class Sidebar{
 			let currentBackground = this.viewer.getBackground();
 			$(`input[name=background_options][value=${currentBackground}]`).trigger("click");
 		}
-
+*/
 		$('#chkEDLEnabled').click( () => {
 			this.viewer.setEDLEnabled($('#chkEDLEnabled').prop("checked"));
 		});
-*/
 	}
 
 	initNavigation(){
