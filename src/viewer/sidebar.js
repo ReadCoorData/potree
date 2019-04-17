@@ -8,6 +8,7 @@ import {DXFExporter} from "../exporter/DXFExporter.js"
 import {Volume, SphereVolume} from "../utils/Volume.js"
 import {PolygonClipVolume} from "../utils/PolygonClipVolume.js"
 import {PropertiesPanel} from "./PropertyPanels/PropertiesPanel.js"
+import {ChannelPropertiesPanel} from "./PropertyPanels/ChannelPropertiesPanel.js"
 import {PointCloudTree} from "../PointCloudTree.js"
 import {Profile} from "../utils/Profile.js"
 import {Measure} from "../utils/Measure.js"
@@ -953,6 +954,15 @@ export class Sidebar{
 		$('#chkEDLEnabled').click( () => {
 			this.viewer.setEDLEnabled($('#chkEDLEnabled').prop("checked"));
 		});
+
+
+	    let elScene = $("#menu_appearance");
+	    let elChProps = elScene.next().find("#channel_properties");
+	    let chPanel = new ChannelPropertiesPanel(elChProps, this.viewer);
+	    chPanel.setScene(this.viewer.scene);
+	    chPanel.setPointClouds(this.viewer.scene.pointclouds);
+	    
+
 	}
 
 	initNavigation(){
