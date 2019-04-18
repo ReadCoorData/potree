@@ -773,3 +773,6 @@ body{
 	pointer-events:none;
 }
 
+.channelheader {
+    cursor: pointer;
+}

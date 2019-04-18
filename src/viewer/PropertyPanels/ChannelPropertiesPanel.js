@@ -80,7 +80,7 @@ export class ChannelPropertiesPanel{
 	    let initChannelSettings = function(material, i, name) {
 		let subpanel = $(`
 	    
-					<div class="divider">
+					<div class="divider channelheader">
 						<span>${name}</span>
 					</div>
 				<ul class="pv-menu-list">
@@ -187,6 +187,22 @@ export class ChannelPropertiesPanel{
 		    initChannelSettings(material, chnum, name);
 		}
 	    }
+
+		panel.find('.channelheader').each(function(){
+			let header = $(this);
+			let content = $(this).next();
+
+			//header.addClass('accordion-header ui-widget');
+			//content.addClass('accordion-content ui-widget');
+
+			content.hide();
+
+			header.click(() => {
+				content.slideToggle();
+			});
+		});
+
+
 	    
 		panel.i18n();
 		this.container.append(panel);
