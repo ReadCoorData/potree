@@ -1,4 +1,5 @@
 import {PointCloudTreeNode} from "./PointCloudTree.js";
+import {MAX_CHANNELS} from "./defines.js";
 
 class U {
 	static toVector3(v, offset) {
@@ -79,6 +80,10 @@ export class PointCloudEptGeometry {
 	    }, []);
 	    if (dataType == 'laszip') {
 		this.channelNames = ['Intensity'];
+	    }
+	    if (this.channelNames.length > MAX_CHANNELS) {
+		console.log('More channels (' + this.channelNames.length + ') than max supported in shader (' + MAX_CHANNELS + ')!');
+		this.channelNames = this.channelNames.slice(0, MAX_CHANNELS);
 	    }
 	    	this.channelDefs = schema.reduce((p, c) => {
 		p[c.name] = c;

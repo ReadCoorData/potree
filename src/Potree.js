@@ -64,7 +64,7 @@ import "./extensions/OrthographicCamera.js";
 import "./extensions/PerspectiveCamera.js";
 import "./extensions/Ray.js";
 
-import {PointColorType} from "./defines";
+import {MAX_CHANNELS, PointColorType} from "./defines";
 import {Enum} from "./Enum";
 import {LRU} from "./LRU";
 import {POCLoader} from "./loader/POCLoader";
@@ -106,7 +106,6 @@ let resourcePath = scriptPath + '/resources';
 
 export {scriptPath, resourcePath};
 
-
 export function loadPointCloud(path, name, callback){
 	let loaded = function(pointcloud){
 		pointcloud.name = name;
@@ -124,7 +123,7 @@ export function loadPointCloud(path, name, callback){
 			else {
 			    let pointcloud = new PointCloudOctree(geometry);
 
-			    for (var i = 0; i < 10; i++) {
+			    for (var i = 0; i < MAX_CHANNELS; i++) {
 				let name = geometry.channelNames[i];
 				let dim = geometry.channelDefs[name];
 				pointcloud.material.uniforms.channelWeight.value[i] = (dim ? 1 : 0);

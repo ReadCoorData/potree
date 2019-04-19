@@ -1,6 +1,8 @@
 
 import {Enum} from "./Enum.js";
 
+// must update pointcloud.vs too
+export const MAX_CHANNELS = 10;
 
 export const CameraMode = {
 	ORTHOGRAPHIC: 0,

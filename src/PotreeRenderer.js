@@ -2,7 +2,7 @@
 import {PointCloudTree} from "./PointCloudTree.js";
 import {PointCloudOctreeNode} from "./PointCloudOctree.js";
 import {PointCloudArena4DNode} from "./arena4d/PointCloudArena4D.js";
-import {PointSizeType, PointColorType, ClipTask} from "./defines.js";
+import {MAX_CHANNELS, PointSizeType, PointColorType, ClipTask} from "./defines.js";
 
 // Copied from three.js: WebGLRenderer.js
 function paramThreeToGL(_gl, p) {
@@ -143,12 +143,10 @@ let attributeLocations = {
 	"normal": 8,
 	"spacing": 9,
     "gpsTime": 10,
-    "channel0": 11,
-    "channel1": 12,
-    "channel2": 13,
-    "channel3": 14,
-    "channel4": 15,
 };
+for (let i = 0; i < MAX_CHANNELS; i++) {
+    attributeLocations['channel' + i] = Object.keys(attributeLocations).length;
+}
 
 class Shader {
 
@@ -997,7 +995,7 @@ export class Renderer {
 					`#define num_snapshots ${numSnapshots}`,
 					`#define num_clipboxes ${numClipBoxes}`,
 					`#define num_clipspheres ${numClipSpheres}`,
-					`#define num_clippolygons ${numClipPolygons}`,
+				    `#define num_clippolygons ${numClipPolygons}`,
 				];
 
 

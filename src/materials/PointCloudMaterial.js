@@ -4,7 +4,7 @@ import {Utils} from "../utils.js";
 import {Gradients} from "./Gradients.js";
 import {Shaders} from "../../build/shaders/shaders.js";
 import {ClassificationScheme} from "./ClassificationScheme.js";
-import {PointSizeType, PointColorType, PointShape, TreeType} from "../defines.js";
+import {MAX_CHANNELS, PointSizeType, PointColorType, PointShape, TreeType} from "../defines.js";
 
 //
 //
@@ -67,19 +67,14 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 			numberOfReturns: { type: 'f', value: [] },
 			pointSourceID: { type: 'f', value: [] },
 		    indices: { type: 'fv', value: [] },
-		    channel0: { type: 'f', value: [] },
-		    channel1: { type: 'f', value: [] },
-		    channel2: { type: 'f', value: [] },
-		    channel3: { type: 'f', value: [] },
-		    channel4: { type: 'f', value: [] },
+		    // not necessary to specify channels?
 		};
 
-	    let maxChannels = 10;
 	    this.uniforms = {
-		clampMin: { type: "fv", value: new Array(maxChannels).fill(0)},
-		clampMax: { type: "fv", value: new Array(maxChannels).fill(0)}, // must be set based on datatype
-		minBrightness: { type: "fv", value: new Array(maxChannels).fill(.1)},
-		channelWeight: { type: "fv", value: new Array(maxChannels).fill(0)}, // must be activated for # of channels present in data
+		clampMin: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)},
+		clampMax: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)}, // must be set based on datatype
+		minBrightness: { type: "fv", value: new Array(MAX_CHANNELS).fill(.1)},
+		channelWeight: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)}, // must be activated for # of channels present in data
  		channelColor: { type: "v3v", value: [
 		    new THREE.Color(1,0,0), // red
 		    new THREE.Color(0,1,0), // green
