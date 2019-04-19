@@ -77,7 +77,7 @@ export class PointCloudEptGeometry {
 		}
 		return p;
 	    }, []);
-	    if (dataType != 'binary') {
+	    if (dataType == 'laszip') {
 		this.channelNames = ['Intensity'];
 	    }
 	    	this.channelDefs = schema.reduce((p, c) => {
@@ -85,9 +85,15 @@ export class PointCloudEptGeometry {
 		return p;
 	}, { });
 	    
-		this.loader = dataType == 'binary'
-			? new Potree.EptBinaryLoader()
-			: new Potree.EptLaszipLoader();
+	    let loaderType = {
+		laszip: Potree.EptLaszipLoader,
+		binary: Potree.EptBinaryLoader,
+		zstandard: Potree.EptZstandardLoader,
+	    }[dataType];
+	    if (loaderType === undefined) {
+		throw new Error('Could not read data type: ' + dataType);
+	    }
+	    this.loader = new loaderType();
 	}
 };
 
