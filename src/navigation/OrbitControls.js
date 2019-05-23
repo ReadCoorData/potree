@@ -280,69 +280,67 @@ export class OrbitControls extends EventDispatcher{
 		    this.viewer.setMoveSpeed(speed);
 		}
 
+		{
+			// 6-axis
+			let gamepad = navigator.getGamepads()[0];
+			if (gamepad !== null) {
+				// recalibrate an axis reading (-1 to 1) to account for a deadzone in the center;
+				// the edges of the deadzone are remapped to 0
+				var normalize = function(x, deadzone) {
+					return Math.max((Math.abs(x) - deadzone) / (1 - deadzone), 0) * (x > 0 ? 1 : -1);
+				}
 
-
-	{
-	    // 6-axis
-	    let gamepad = navigator.getGamepads()[0];
-	    if (gamepad !== null) {
-		// recalibrate an axis reading (-1 to 1) to account for a deadzone in the center;
-		// the edges of the deadzone are remapped to 0
-		var normalize = function(x, deadzone) {
-		    return Math.max((Math.abs(x) - deadzone) / (1 - deadzone), 0) * (x > 0 ? 1 : -1);
+				if (gamepad.axes.length == 6) {
+					// 6-axis mouse
+					var lock_horizon = true;
+					var norm = function(x, deadzone) { return normalize(x, deadzone || .04); };		    
+					var forward = -norm(gamepad.axes[1]);
+					var right = norm(gamepad.axes[0]);
+					var up = -norm(gamepad.axes[2]);
+					var pitch = norm(gamepad.axes[3]);
+					var roll = -norm(gamepad.axes[4], .3);
+					var yaw = norm(gamepad.axes[5]);
+				} else {
+					// normal gamepad
+					var lock_horizon = false;
+					var norm = function(x, deadzone) { return normalize(x, deadzone || .02); };		    
+					var forward = -norm(gamepad.axes[1]);
+					var right = norm(gamepad.axes[0], .1);
+					// assumes pressure-sensitive rear shoulder buttons
+					var up = gamepad.buttons[7].value - gamepad.buttons[6].value;
+					// use default inverted axis
+					var pitch = norm(gamepad.axes[3]);
+					var roll = (gamepad.buttons[4].pressed || gamepad.buttons[10].pressed ? 1 : 0) - 
+						(gamepad.buttons[5].pressed || gamepad.buttons[11].pressed ? 1 : 0); 
+					var yaw = norm(gamepad.axes[2]);
+				}
+				//console.log(forward, right, up, pitch, roll, yaw);
+				
+				view.yaw -= yaw * delta;
+				view.pitch += pitch * delta;
+				
+				// since z-up is locked, use roll to control acceleration
+				// (alternatively, could set speed automatically based on z-distance from pivot or surface)
+				var accelSensitivity = 2.5;
+				this.sixDofSpeed *= Math.exp(roll * delta * accelSensitivity);
+				if (roll != 0) {
+					console.log("new speed:", this.sixDofSpeed);
+				}
+				
+				var tx = new THREE.Vector3(right, forward, up);
+				if (!lock_horizon) {
+					tx.applyAxisAngle(new THREE.Vector3(1, 0, 0), view.pitch);
+				}
+				tx.applyAxisAngle(new THREE.Vector3(0, 0, 1), view.yaw);
+				tx.multiplyScalar(delta * this.sixDofSpeed);
+				view.translateWorld(tx.x, tx.y, tx.z);
+			}
 		}
-
-		if (gamepad.axes.length == 6) {
-		    // 6-axis mouse
-		    var lock_horizon = true;
-		    var norm = function(x, deadzone) { return normalize(x, deadzone || .04); };		    
-		    var forward = -norm(gamepad.axes[1]);
-		    var right = norm(gamepad.axes[0]);
-		    var up = -norm(gamepad.axes[2]);
-		    var pitch = norm(gamepad.axes[3]);
-		    var roll = -norm(gamepad.axes[4], .3);
-		    var yaw = norm(gamepad.axes[5]);
-		} else {
-		    // normal gamepad
-		    var lock_horizon = false;
-		    var norm = function(x, deadzone) { return normalize(x, deadzone || .02); };		    
-		    var forward = -norm(gamepad.axes[1]);
-		    var right = norm(gamepad.axes[0], .1);
-		    // assumes pressure-sensitive rear shoulder buttons
-		    var up = gamepad.buttons[7].value - gamepad.buttons[6].value;
-		    // use default inverted axis
-		    var pitch = norm(gamepad.axes[3]);
-		    var roll = (gamepad.buttons[4].pressed || gamepad.buttons[10].pressed ? 1 : 0) - 
-			(gamepad.buttons[5].pressed || gamepad.buttons[11].pressed ? 1 : 0); 
-		    var yaw = norm(gamepad.axes[2]);
-		}
-		//console.log(forward, right, up, pitch, roll, yaw);
 		
-		view.yaw -= yaw * delta;
-		view.pitch += pitch * delta;
-
-		// since z-up is locked, use roll to control acceleration
-		// (alternatively, could set speed automatically based on z-distance from pivot or surface)
-		var accelSensitivity = 2.5;
-		this.sixDofSpeed *= Math.exp(roll * delta * accelSensitivity);
-		if (roll != 0) {
-		    console.log("new speed:", this.sixDofSpeed);
-		}
-
-		var tx = new THREE.Vector3(right, forward, up);
-		if (!lock_horizon) {
-		    tx.applyAxisAngle(new THREE.Vector3(1, 0, 0), view.pitch);
-		}
-		tx.applyAxisAngle(new THREE.Vector3(0, 0, 1), view.yaw);
-		tx.multiplyScalar(delta * this.sixDofSpeed);
-		view.translateWorld(tx.x, tx.y, tx.z);
-	    }
-	}
-	
 		{ // decelerate over time
 			let progression = Math.min(1, this.fadeFactor * delta);
 			let attenuation = Math.max(0, 1 - this.fadeFactor * delta);
-
+			
 			this.yawDelta *= attenuation;
 			this.pitchDelta *= attenuation;
 			this.panDelta.multiplyScalar(attenuation);
@@ -350,10 +348,10 @@ export class OrbitControls extends EventDispatcher{
 			this.radiusDelta -= progression * this.radiusDelta;
 		}
     }
-
+	
     updateBaselineSpeed() {
-	this.sixDofSpeed = 25 * this.viewer.getMoveSpeed();
-	console.log("new speed:", this.sixDofSpeed);
+		this.sixDofSpeed = 25 * this.viewer.getMoveSpeed();
+		console.log("new speed:", this.sixDofSpeed);
     }
-
+	
 };

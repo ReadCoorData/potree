@@ -85,33 +85,33 @@ export class EptBinaryLoader {
 			g.attributes.indices.normalized = true;
 
 		    for (let i = 0; i < e.data.channels.length; i++) {
-			let dim = node.ept.channelDefs[node.ept.channelNames[i]];
-			let buf = e.data.channels[i];
-			let data = null;
-			if (dim.type == 'signed') switch (dim.size) {
-			    case 1: data = new Int8Array(buf); break;
-			    case 2: data = new Int16Array(buf); break;
-			    case 4: data = new Int32Array(buf); break;
-			    //case 8: data = new Int64Array(buf); break;
-			}
-			if (dim.type == 'unsigned') switch (dim.size) {
-			    case 1: data = new Uint8Array(buf); break;
-			    case 2: data = new Uint16Array(buf); break;
-			    case 4: data = new Uint32Array(buf); break;
-			    //case 8: data = new Uint64Array(buf); break;
-			}
-			if (dim.type == 'float') switch (dim.size) {
-			    case 4: data = new Float32Array(buf); break;
-			    case 8: data = new Float64Array(buf); break;
-			}
-			g.addAttribute('channel' + i, new THREE.BufferAttribute(data, 1));
+				let dim = node.ept.channelDefs[node.ept.channelNames[i]];
+				let buf = e.data.channels[i];
+				let data = null;
+				if (dim.type == 'signed') switch (dim.size) {
+					case 1: data = new Int8Array(buf); break;
+					case 2: data = new Int16Array(buf); break;
+					case 4: data = new Int32Array(buf); break;
+					//case 8: data = new Int64Array(buf); break;
+				}
+				if (dim.type == 'unsigned') switch (dim.size) {
+					case 1: data = new Uint8Array(buf); break;
+					case 2: data = new Uint16Array(buf); break;
+					case 4: data = new Uint32Array(buf); break;
+					//case 8: data = new Uint64Array(buf); break;
+				}
+				if (dim.type == 'float') switch (dim.size) {
+					case 4: data = new Float32Array(buf); break;
+					case 8: data = new Float64Array(buf); break;
+				}
+				g.addAttribute('channel' + i, new THREE.BufferAttribute(data, 1));
 		    }
 		    
 			let tightBoundingBox = new THREE.Box3(
 				new THREE.Vector3().fromArray(e.data.tightBoundingBox.min),
 				new THREE.Vector3().fromArray(e.data.tightBoundingBox.max)
 			);
-
+			
 			node.doneLoading(
 					g,
 					tightBoundingBox,

@@ -362,40 +362,40 @@ class Shader {
     setUniform1fv(name, value) {
 		const gl = this.gl;
 		const uniform = this.uniforms[name + '[0]'];
-
+		
 		if (uniform === undefined) {
 			return;
 		}
 
-	// need to update for array comparison -- but is this really worth the overhead vs.
-	// updating uniforms each frame?
-	//if(uniform.value === value){
-	//		return;
-	//	}
+		// need to update for array comparison -- but is this really worth the overhead vs.
+		// updating uniforms each frame?
+		//if(uniform.value === value){
+		//		return;
+		//	}
 
-	uniform.value = value;
-
-	gl.uniform1fv(uniform.location, value);
+		uniform.value = value;
+		
+		gl.uniform1fv(uniform.location, value);
 	}
 
     setUniform3fv(name, value) {
-	value = value.map(function(e){return [e.r, e.g, e.b]}).reduce(function(a,b){return $.merge(a,b)});
-	
+		value = value.map(function(e){return [e.r, e.g, e.b]}).reduce(function(a,b){return $.merge(a,b)});
+		
 		const gl = this.gl;
 		const uniform = this.uniforms[name + '[0]'];
-
+		
 		if (uniform === undefined) {
 			return;
 		}
-
-	// need to update for array comparison -- but is this really worth the overhead vs.
-	// updating uniforms each frame?
-	//if(uniform.value === value){
-	//		return;
-	//	}
-
+		
+		// need to update for array comparison -- but is this really worth the overhead vs.
+		// updating uniforms each frame?
+		//if(uniform.value === value){
+		//		return;
+		//	}
+		
 		uniform.value = value;
-
+		
 		gl.uniform3fv(uniform.location, value);
 	}
 

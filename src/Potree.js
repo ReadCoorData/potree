@@ -124,27 +124,26 @@ export function loadPointCloud(path, name, callback){
 			    let pointcloud = new PointCloudOctree(geometry);
 
 			    for (var i = 0; i < MAX_CHANNELS; i++) {
-				let name = geometry.channelNames[i];
-				let dim = geometry.channelDefs[name];
-				pointcloud.material.uniforms.channelWeight.value[i] = (dim ? 1 : 0);
-				if (dim) {
-				    let clampMin = 0, clampMax = null;
-				    if (dim.type == 'signed' || dim.type == 'unsigned') {
-					clampMax = Math.pow(2, 8*dim.size);
-					if (dim.type == 'signed') {
-					    clampMin = -clampMax / 2;
-					    clampMax = clampMax / 2 - 1;
+					let name = geometry.channelNames[i];
+					let dim = geometry.channelDefs[name];
+					pointcloud.material.uniforms.channelWeight.value[i] = (dim ? 1 : 0);
+					if (dim) {
+						let clampMin = 0, clampMax = null;
+						if (dim.type == 'signed' || dim.type == 'unsigned') {
+							clampMax = Math.pow(2, 8*dim.size);
+							if (dim.type == 'signed') {
+								clampMin = -clampMax / 2;
+								clampMax = clampMax / 2 - 1;
+							}
+						}
+						if (dim.type == 'float') {
+							clampMax = 1000000; // FIXME -- what should the default be here?
+						}
+						console.log(name, clampMin, clampMax);
+						pointcloud.material.uniforms.clampMin.value[i] = clampMin;
+						pointcloud.material.uniforms.clampMax.value[i] = clampMax;
 					}
-				    }
-				    if (dim.type == 'float') {
-					clampMax = 1000000; // FIXME -- what should the default be here?
-				    }
-				    console.log(name, clampMin, clampMax);
-				    pointcloud.material.uniforms.clampMin.value[i] = clampMin;
-				    pointcloud.material.uniforms.clampMax.value[i] = clampMax;
-				}
 			    }
-			    
 			    
 				loaded(pointcloud);
 			}

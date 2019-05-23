@@ -57,8 +57,8 @@ export const PointColorType = {
 	PHONG: 12,
 	RGB_HEIGHT: 13,
 	GPS_TIME: 14,
-        CHANNELS: 15,
-        COMPOSITE: 50
+    CHANNELS: 15,
+    COMPOSITE: 50
 };
 
 export const TreeType = {

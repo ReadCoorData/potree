@@ -66,27 +66,27 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 			returnNumber: { type: 'f', value: [] },
 			numberOfReturns: { type: 'f', value: [] },
 			pointSourceID: { type: 'f', value: [] },
-		    indices: { type: 'fv', value: [] },
+			indices: { type: 'fv', value: [] },
 		    // not necessary to specify channels?
 		};
 
 	    this.uniforms = {
-		clampMin: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)},
-		clampMax: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)}, // must be set based on datatype
-		minBrightness: { type: "fv", value: new Array(MAX_CHANNELS).fill(.1)},
-		channelWeight: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)}, // must be activated for # of channels present in data
- 		channelColor: { type: "v3v", value: [
-		    new THREE.Color(1,0,0), // red
-		    new THREE.Color(0,1,0), // green
-		    new THREE.Color(0,.5,1), // sky blue
-		    new THREE.Color(1,1,0), // yellow
-                    new THREE.Color(1,.5,0), // orange
-		    new THREE.Color(0,1,.75), // teal
-                    new THREE.Color(.5,0,1), // violet
-		    new THREE.Color(0,0,1), // deep blue
-		    new THREE.Color(1,0,1), // magenta
-		    new THREE.Color(0,1,1), // cyan
-		]},
+			clampMin: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)},
+			clampMax: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)}, // must be set based on datatype
+			minBrightness: { type: "fv", value: new Array(MAX_CHANNELS).fill(.1)},
+			channelWeight: { type: "fv", value: new Array(MAX_CHANNELS).fill(0)}, // must be activated for # of channels present in data
+ 			channelColor: { type: "v3v", value: [
+				new THREE.Color(1,0,0), // red
+				new THREE.Color(0,1,0), // green
+				new THREE.Color(0,.5,1), // sky blue
+				new THREE.Color(1,1,0), // yellow
+                new THREE.Color(1,.5,0), // orange
+				new THREE.Color(0,1,.75), // teal
+                new THREE.Color(.5,0,1), // violet
+				new THREE.Color(0,0,1), // deep blue
+				new THREE.Color(1,0,1), // magenta
+				new THREE.Color(0,1,1), // cyan
+			]},
 			level:				{ type: "f", value: 0.0 },
 			vnStart:			{ type: "f", value: 0.0 },
 			spacing:			{ type: "f", value: 1.0 },

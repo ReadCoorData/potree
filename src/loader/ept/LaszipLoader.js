@@ -134,7 +134,7 @@ export class EptLazBatcher {
 			g.addAttribute('pointSourceID',
 					new THREE.BufferAttribute(pointSourceIDs, 1));
 			g.addAttribute('indices',
-				       new THREE.BufferAttribute(indices, 4));
+					new THREE.BufferAttribute(indices, 4));
 		    g.attributes.indices.normalized = true;
 
 		    // make configurable whether to use intensity with channel UI

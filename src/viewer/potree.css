@@ -110,7 +110,7 @@
 
 #potree_sidebar_container{
     position:	absolute;
-    right: 0px;
+    right:      0px;
 	z-index:	0;
 	width:		350px;
 	height:		100%;
@@ -134,7 +134,7 @@
 
 .potree_menu_toggle{
     position:		absolute;
-    right: 0px;
+    right:          0px;
 	float:			right;
 	margin:			8px 8px;
 	background:		none;

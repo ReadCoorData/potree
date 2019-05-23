@@ -11,7 +11,7 @@ function parseEpt(event) {
 		p[c.name] = c;
 		return p;
 	}, { });
-
+	
 	let dimOffset = (name) => {
 		let offset = 0;
 		for (var i = 0; i < schema.length; ++i) {
@@ -20,12 +20,12 @@ function parseEpt(event) {
 		}
 		return undefined;
 	};
-
+	
 	let getExtractor = (name) => {
 		let offset = dimOffset(name);
 		let type = dimensions[name].type;
 		let size = dimensions[name].size;
-
+		
 		if (type == 'signed') switch (size) {
 			case 1: return (p) => view.getInt8(p + offset);
 			case 2: return (p) => view.getInt16(p + offset, true);
@@ -42,14 +42,14 @@ function parseEpt(event) {
 			case 4: return (p) => view.getFloat32(p + offset, true);
 			case 8: return (p) => view.getFloat64(p + offset, true);
 		}
-
+		
 		let str = JSON.stringify(dimensions[name]);
 		throw new Error(`Invalid dimension specification for ${name}: ${str}`);
 	};
-
+	
 	let pointSize = schema.reduce((p, c) => p + c.size, 0);
 	let numPoints = buffer.byteLength / pointSize;
-
+	
 	let xyzBuffer, rgbBuffer, intensityBuffer, classificationBuffer,
 		returnNumberBuffer, numberOfReturnsBuffer, pointSourceIdBuffer;
 	let xyz, rgb, intensity, classification, returnNumber, numberOfReturns,
@@ -57,7 +57,7 @@ function parseEpt(event) {
 	let xyzExtractor, rgbExtractor, intensityExtractor, classificationExtractor,
 		returnNumberExtractor, numberOfReturnsExtractor, pointSourceIdExtractor;
 	let twoByteColor = false;
-
+	
 	if (dimensions['X'] && dimensions['Y'] && dimensions['Z']) {
 		xyzBuffer = new ArrayBuffer(numPoints * 4 * 3);
 		xyz = new Float32Array(xyzBuffer);
@@ -67,7 +67,7 @@ function parseEpt(event) {
 			getExtractor('Z')
 		];
 	}
-
+	
 	if (dimensions['Red'] && dimensions['Green'] && dimensions['Blue']) {
 		rgbBuffer = new ArrayBuffer(numPoints * 4);
 		rgb = new Uint8Array(rgbBuffer);
@@ -76,7 +76,7 @@ function parseEpt(event) {
 			getExtractor('Green'),
 			getExtractor('Blue')
 		];
-
+		
 		let r, g, b, pos;
 		for (let i = 0; i < numPoints && !twoByteColor; ++i) {
 			pos = i * pointSize;
@@ -124,36 +124,36 @@ function parseEpt(event) {
     let channelBuffers = [];
     let channels = [];
     let channelExtractors = [];
-
+	
     for (let dimName in dimensions) {
-	if (channelNames.indexOf(dimName) == -1) {
-	    continue;
-	}
-	let dim = dimensions[dimName];
-
-	let buf = new ArrayBuffer(numPoints * dim.size);
-	let data = null;
-	if (dim.type == 'signed') switch (dim.size) {
-	    case 1: data = new Int8Array(buf); break;
-	    case 2: data = new Int16Array(buf); break;
-	    case 4: data = new Int32Array(buf); break;
-	    //case 8: data = new Int64Array(buf); break;
-	}
-	if (dim.type == 'unsigned') switch (dim.size) {
-	    case 1: data = new Uint8Array(buf); break;
-	    case 2: data = new Uint16Array(buf); break;
-	    case 4: data = new Uint32Array(buf); break;
-	    //case 8: data = new Uint64Array(buf); break;
-	}
-	if (dim.type == 'float') switch (dim.size) {
-	    case 4: data = new Float32Array(buf); break;
-	    case 8: data = new Float64Array(buf); break;
-	}
-	let extractor = getExtractor(dimName);
-
-	channelBuffers.push(buf);
-	channels.push(data);
-	channelExtractors.push(extractor);
+		if (channelNames.indexOf(dimName) == -1) {
+			continue;
+		}
+		let dim = dimensions[dimName];
+		
+		let buf = new ArrayBuffer(numPoints * dim.size);
+		let data = null;
+		if (dim.type == 'signed') switch (dim.size) {
+			case 1: data = new Int8Array(buf); break;
+			case 2: data = new Int16Array(buf); break;
+			case 4: data = new Int32Array(buf); break;
+			//case 8: data = new Int64Array(buf); break;
+		}
+		if (dim.type == 'unsigned') switch (dim.size) {
+			case 1: data = new Uint8Array(buf); break;
+			case 2: data = new Uint16Array(buf); break;
+			case 4: data = new Uint32Array(buf); break;
+			//case 8: data = new Uint64Array(buf); break;
+		}
+		if (dim.type == 'float') switch (dim.size) {
+			case 4: data = new Float32Array(buf); break;
+			case 8: data = new Float64Array(buf); break;
+		}
+		let extractor = getExtractor(dimName);
+		
+		channelBuffers.push(buf);
+		channels.push(data);
+		channelExtractors.push(extractor);
     }
     
 	let mean = [0, 0, 0];
@@ -161,17 +161,17 @@ function parseEpt(event) {
 		min: [Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE],
 		max: [-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE],
 	};
-
+	
 	let x, y, z, r, g, b;
 	for (let i = 0; i < numPoints; ++i) {
 		let pos = i * pointSize;
-
+		
 
 	
-	for (let ch = 0; ch < channels.length; ch++) {
-	    channels[ch][i] = channelExtractors[ch](pos);
-	}
-	
+		for (let ch = 0; ch < channels.length; ch++) {
+			channels[ch][i] = channelExtractors[ch](pos);
+		}
+		
 		if (xyz) {
 			x = xyzExtractor[0](pos) * scale.x + offset.x - mins[0];
 			y = xyzExtractor[1](pos) * scale.y + offset.y - mins[1];

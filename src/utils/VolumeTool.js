@@ -81,7 +81,7 @@ export class VolumeTool extends EventDispatcher{
 			callback: null
 		};
 
-	let drag = e => {
+		let drag = e => {
 			let camera = this.viewer.scene.getActiveCamera();
 			
 			let I = Utils.getMousePointCloudIntersection(
@@ -93,35 +93,35 @@ export class VolumeTool extends EventDispatcher{
 
 		    if (I) {
 				volume.position.copy(I.location);
-
+				
 				let wp = volume.getWorldPosition(new THREE.Vector3()).applyMatrix4(camera.matrixWorldInverse);
 				// let pp = new THREE.Vector4(wp.x, wp.y, wp.z).applyMatrix4(camera.projectionMatrix);
-			let w = Math.abs((wp.z / 5));
-
-			let worldBound = this.viewer.scene.pointclouds[0].pcoGeometry.tightBoundingBox;
-			let height = worldBound.max.z - worldBound.min.z;
-			let zCenter = (worldBound.min.z + worldBound.max.z) / 2;			
-			volume.scale.set(w, w, height);
-			volume.position.z = zCenter;
+				let w = Math.abs((wp.z / 5));
+				
+				let worldBound = this.viewer.scene.pointclouds[0].pcoGeometry.tightBoundingBox;
+				let height = worldBound.max.z - worldBound.min.z;
+				let zCenter = (worldBound.min.z + worldBound.max.z) / 2;			
+				volume.scale.set(w, w, height);
+				volume.position.z = zCenter;
 			}
 		};
 
-	let drop = e => {
+		let drop = e => {
 			volume.removeEventListener('drag', drag);
 			volume.removeEventListener('drop', drop);
-
-	    cancel.callback();
-
-	    let clipVolumes = this.viewer.scene.volumes.filter(volume => volume.clip === true);
-	    for(let clipVolume of clipVolumes){
-		if (clipVolume != volume) {
-		    this.viewer.scene.removeVolume(clipVolume);
-		}
-	    }
-	    
-	    this.viewer.inputHandler.toggleSelection(volume);
-	    $("#cliptask_options").find('input[value=\'SHOW_INSIDE\']').trigger("click");
-
+			
+			cancel.callback();
+			
+			let clipVolumes = this.viewer.scene.volumes.filter(volume => volume.clip === true);
+			for(let clipVolume of clipVolumes){
+				if (clipVolume != volume) {
+					this.viewer.scene.removeVolume(clipVolume);
+				}
+			}
+			
+			this.viewer.inputHandler.toggleSelection(volume);
+			$("#cliptask_options").find('input[value=\'SHOW_INSIDE\']').trigger("click");
+			
 		};
 
 		cancel.callback = e => {

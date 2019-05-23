@@ -276,8 +276,8 @@ channelWeight - scaling factor [0.0-1.0] for the channel's color before mixing w
 function setChannelProperties(pointcloud, dict, ix) {
     ix = ix || 0;
     Object.keys(dict).forEach(propname => {
-	let value = dict[propname];
-	pointcloud.material.uniforms[propname].value[ix] = value;
+		let value = dict[propname];
+		pointcloud.material.uniforms[propname].value[ix] = value;
     });
 }
 
@@ -415,14 +415,14 @@ var init = (name) => {
 resources.forEach((p, i) => {
     var [path, name] = normalizePath(p);
     console.log('Loading', name, path);
-
+	
     Potree.loadPointCloud(path, name, (e) => {
         pcs[i] = e.pointcloud;
         console.log('Loaded', name, i);
-
+		
         if (pcs.every((v) => v)) {
-	    // only add once all pointclouds are available to ensure deterministic ordering
-	    pcs.forEach((p, i) => viewer.scene.addPointCloud(p));
+			// only add once all pointclouds are available to ensure deterministic ordering
+			pcs.forEach((p, i) => viewer.scene.addPointCloud(p));
             console.log('All point clouds loaded');
             init(resources.length == 1 ? name : null);
         }

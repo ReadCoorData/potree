@@ -72,31 +72,31 @@ export class PointCloudEptGeometry {
 
 	    let channelsExclude = ['X', 'Y', 'Z']; //, 'Red', 'Green', 'Blue', 'Intensity', 'Classification', 'ReturnNumber', 'NumberOfReturns', 'PointSourceId';
 	    this.channelNames = schema.reduce((p, c) => {
-		let name = c.name;
-		if (channelsExclude.indexOf(name) == -1) {
-		    p.push(c.name);
-		}
-		return p;
+			let name = c.name;
+			if (channelsExclude.indexOf(name) == -1) {
+				p.push(c.name);
+			}
+			return p;
 	    }, []);
 	    if (dataType == 'laszip') {
-		this.channelNames = ['Intensity'];
+			this.channelNames = ['Intensity'];
 	    }
 	    if (this.channelNames.length > MAX_CHANNELS) {
-		console.log('More channels (' + this.channelNames.length + ') than max supported in shader (' + MAX_CHANNELS + ')!');
-		this.channelNames = this.channelNames.slice(0, MAX_CHANNELS);
+			console.log('More channels (' + this.channelNames.length + ') than max supported in shader (' + MAX_CHANNELS + ')!');
+			this.channelNames = this.channelNames.slice(0, MAX_CHANNELS);
 	    }
-	    	this.channelDefs = schema.reduce((p, c) => {
-		p[c.name] = c;
-		return p;
-	}, { });
+	    this.channelDefs = schema.reduce((p, c) => {
+			p[c.name] = c;
+			return p;
+		}, { });
 	    
 	    let loaderType = {
-		laszip: Potree.EptLaszipLoader,
-		binary: Potree.EptBinaryLoader,
-		zstandard: Potree.EptZstandardLoader,
+			laszip: Potree.EptLaszipLoader,
+			binary: Potree.EptBinaryLoader,
+			zstandard: Potree.EptZstandardLoader,
 	    }[dataType];
 	    if (loaderType === undefined) {
-		throw new Error('Could not read data type: ' + dataType);
+			throw new Error('Could not read data type: ' + dataType);
 	    }
 	    this.loader = new loaderType();
 	}

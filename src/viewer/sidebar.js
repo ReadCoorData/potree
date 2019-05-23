@@ -683,10 +683,8 @@ export class Sidebar{
 				Potree.resourcePath + "/icons/remove.svg",
 				"[title]tt.remove_all_measurement",
 				() => {
-
 				    this.viewer.scene.removeAllClipVolumes();
 				    $("#cliptask_options").find('input[value=\'HIGHLIGHT\']').trigger("click");
-
 				}
 			));
 		}
@@ -929,7 +927,7 @@ export class Sidebar{
 
 */
 
-	        $('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
+	    $('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
 
 	    /*
 
