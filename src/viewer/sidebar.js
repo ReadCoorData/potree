@@ -80,11 +80,6 @@ export class Sidebar{
 					closed: true,
 					maxMarkers: 3,
 					name: 'Angle'});
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -102,11 +97,6 @@ export class Sidebar{
 					closed: true,
 					maxMarkers: 1,
 					name: 'Point'});
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -121,11 +111,6 @@ export class Sidebar{
 					showArea: false,
 					closed: false,
 					name: 'Distance'});
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -142,11 +127,6 @@ export class Sidebar{
 					closed: false,
 					maxMarkers: 2,
 					name: 'Height'});
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -161,11 +141,6 @@ export class Sidebar{
 					showArea: true,
 					closed: true,
 					name: 'Area'});
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -175,11 +150,6 @@ export class Sidebar{
 			'[title]tt.volume_measurement',
 			() => {
 				let volume = this.volumeTool.startInsertion(); 
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === volume.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -189,11 +159,6 @@ export class Sidebar{
 			'[title]tt.volume_measurement',
 			() => { 
 				let volume = this.volumeTool.startInsertion({type: SphereVolume}); 
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === volume.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -205,11 +170,6 @@ export class Sidebar{
 			() => {
 				$('#menu_measurements').next().slideDown(); ;
 				let profile = this.profileTool.startInsertion();
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === profile.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 */
@@ -520,11 +480,6 @@ export class Sidebar{
 			'[title]tt.clip_volume',
 			() => {
 				let item = this.volumeTool.startInsertion({clip: true}); 
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -535,11 +490,6 @@ export class Sidebar{
 			"[title]tt.clip_polygon",
 			() => {
 				let item = this.viewer.clippingTool.startInsertion({type: "polygon"});
-
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			}
 		));
 
@@ -557,11 +507,6 @@ export class Sidebar{
 					}
 					
 					let item = boxSelectTool.startInsertion();
-
-					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
-					$.jstree.reference(jsonNode.id).deselect_all();
-					$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 				}
 			));
 		}
