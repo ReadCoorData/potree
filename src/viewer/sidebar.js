@@ -224,65 +224,11 @@ export class Sidebar{
 		));
 	}
 
-	initScene(){
-
-		let elScene = $("#menu_scene");
-		let elObjects = elScene.next().find("#scene_objects");
-		let elProperties = elScene.next().find("#scene_object_properties");
-		
-
-		{
-			let elExport = elScene.next().find("#scene_export");
-
-			let geoJSONIcon = `${Potree.resourcePath}/icons/file_geojson.svg`;
-			let dxfIcon = `${Potree.resourcePath}/icons/file_dxf.svg`;
-
-			elExport.append(`
-				Export: <br>
-				<a href="#" download="measure.json"><img name="geojson_export_button" src="${geoJSONIcon}" class="button-icon" style="height: 24px" /></a>
-				<a href="#" download="measure.dxf"><img name="dxf_export_button" src="${dxfIcon}" class="button-icon" style="height: 24px" /></a>
-			`);
-
-			let elDownloadJSON = elExport.find("img[name=geojson_export_button]").parent();
-			elDownloadJSON.click( (event) => {
-				let scene = this.viewer.scene;
-				let measurements = [...scene.measurements, ...scene.profiles, ...scene.volumes];
-
-				if(measurements.length > 0){
-					let geoJson = GeoJSONExporter.toString(measurements);
-
-					let url = window.URL.createObjectURL(new Blob([geoJson], {type: 'data:application/octet-stream'}));
-					elDownloadJSON.attr('href', url);
-				}else{
-					this.viewer.postError("no measurements to export");
-					event.preventDefault();
-				}
-			});
-
-			let elDownloadDXF = elExport.find("img[name=dxf_export_button]").parent();
-			elDownloadDXF.click( (event) => {
-				let scene = this.viewer.scene;
-				let measurements = [...scene.measurements, ...scene.profiles, ...scene.volumes];
-
-				if(measurements.length > 0){
-					let dxf = DXFExporter.toString(measurements);
-
-					let url = window.URL.createObjectURL(new Blob([dxf], {type: 'data:application/octet-stream'}));
-					elDownloadDXF.attr('href', url);
-				}else{
-					this.viewer.postError("no measurements to export");
-					event.preventDefault();
-				}
-			});
-		}
-
-		let propertiesPanel = new PropertiesPanel(elProperties, this.viewer);
-		propertiesPanel.setScene(this.viewer.scene);
-		
+	initTree(container) {
 		localStorage.removeItem('jstree');
 
 		let tree = $(`<div id="jstree_scene"></div>`);
-		elObjects.append(tree);
+		container.append(tree);
 
 		tree.jstree({
 			'plugins': ["checkbox", "state"],
@@ -320,14 +266,8 @@ export class Sidebar{
 		}
 
 		let pcID = tree.jstree('create_node', "#", { "text": "<b>Point Clouds</b>", "id": "pointclouds"}, "last", false, false);
-		let measurementID = tree.jstree('create_node', "#", { "text": "<b>Measurements</b>", "id": "measurements" }, "last", false, false);
-		let annotationsID = tree.jstree('create_node', "#", { "text": "<b>Annotations</b>", "id": "annotations" }, "last", false, false);
-		let otherID = tree.jstree('create_node', "#", { "text": "<b>Other</b>", "id": "other" }, "last", false, false);
 
 		tree.jstree("check_node", pcID);
-		tree.jstree("check_node", measurementID);
-		tree.jstree("check_node", annotationsID);
-		tree.jstree("check_node", otherID);
 
 		tree.on('create_node.jstree', (e, data) => {
 			tree.jstree("open_all");
@@ -464,126 +404,75 @@ export class Sidebar{
 			});
 		};
 
-		let onMeasurementAdded = (e) => {
-			let measurement = e.measurement;
-			let icon = Utils.getMeasurementIcon(measurement);
-			createNode(measurementID, measurement.name, icon, measurement);
-		};
-
-		let onVolumeAdded = (e) => {
-			let volume = e.volume;
-			let icon = Utils.getMeasurementIcon(volume);
-			let node = createNode(measurementID, volume.name, icon, volume);
-
-			volume.addEventListener("visibility_changed", () => {
-				if(volume.visible){
-					tree.jstree('check_node', node);
-				}else{
-					tree.jstree('uncheck_node', node);
-				}
-			});
-		};
-
-		let onProfileAdded = (e) => {
-			let profile = e.profile;
-			let icon = Utils.getMeasurementIcon(profile);
-			createNode(measurementID, profile.name, icon, profile);
-		};
-
-		let onAnnotationAdded = (e) => {
-			let annotation = e.annotation;
-
-			let annotationIcon = `${Potree.resourcePath}/icons/annotation.svg`;
-			let parentID = this.annotationMapping.get(annotation.parent);
-			let annotationID = createNode(parentID, annotation.title, annotationIcon, annotation);
-			this.annotationMapping.set(annotation, annotationID);
-
-			//let node = createNode(annotationsID, annotation.name, icon, volume);
-			//oldScene.annotations.removeEventListener('annotation_added', this.onAnnotationAdded);
-		};
-
 		this.viewer.scene.addEventListener("pointcloud_added", onPointCloudAdded);
-		this.viewer.scene.addEventListener("measurement_added", onMeasurementAdded);
-		this.viewer.scene.addEventListener("profile_added", onProfileAdded);
-		this.viewer.scene.addEventListener("volume_added", onVolumeAdded);
-		this.viewer.scene.addEventListener("polygon_clip_volume_added", onVolumeAdded);
-		this.viewer.scene.annotations.addEventListener("annotation_added", onAnnotationAdded);
-
-		let onMeasurementRemoved = (e) => {
-			let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-			let jsonNode = measurementsRoot.children.find(child => child.data.uuid === e.measurement.uuid);
-			
-			tree.jstree("delete_node", jsonNode.id);
-		};
-
-		let onVolumeRemoved = (e) => {
-			let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-			let jsonNode = measurementsRoot.children.find(child => child.data.uuid === e.volume.uuid);
-			
-			tree.jstree("delete_node", jsonNode.id);
-		};
-
-		let onProfileRemoved = (e) => {
-			let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-			let jsonNode = measurementsRoot.children.find(child => child.data.uuid === e.profile.uuid);
-			
-			tree.jstree("delete_node", jsonNode.id);
-		};
-
-		this.viewer.scene.addEventListener("measurement_removed", onMeasurementRemoved);
-		this.viewer.scene.addEventListener("volume_removed", onVolumeRemoved);
-		this.viewer.scene.addEventListener("profile_removed", onProfileRemoved);
-
-		{
-			let annotationIcon = `${Potree.resourcePath}/icons/annotation.svg`;
-			this.annotationMapping = new Map(); 
-			this.annotationMapping.set(this.viewer.scene.annotations, annotationsID);
-			this.viewer.scene.annotations.traverseDescendants(annotation => {
-				let parentID = this.annotationMapping.get(annotation.parent);
-				let annotationID = createNode(parentID, annotation.title, annotationIcon, annotation);
-				this.annotationMapping.set(annotation, annotationID);
-			});
-		}
 
 		for(let pointcloud of this.viewer.scene.pointclouds){
 			onPointCloudAdded({pointcloud: pointcloud});
-		}
-
-		for(let measurement of this.viewer.scene.measurements){
-			onMeasurementAdded({measurement: measurement});
-		}
-
-		for(let volume of [...this.viewer.scene.volumes, ...this.viewer.scene.polygonClipVolumes]){
-			onVolumeAdded({volume: volume});
-		}
-
-
-		for(let profile of this.viewer.scene.profiles){
-			onProfileAdded({profile: profile});
-		}
-
-		{
-			createNode(otherID, "Camera", null, new THREE.Camera());
 		}
 
 		this.viewer.addEventListener("scene_changed", (e) => {
 			propertiesPanel.setScene(e.scene);
 
 			e.oldScene.removeEventListener("pointcloud_added", onPointCloudAdded);
-			e.oldScene.removeEventListener("measurement_added", onMeasurementAdded);
-			e.oldScene.removeEventListener("profile_added", onProfileAdded);
-			e.oldScene.removeEventListener("volume_added", onVolumeAdded);
-			e.oldScene.removeEventListener("polygon_clip_volume_added", onVolumeAdded);
-			e.oldScene.removeEventListener("measurement_removed", onMeasurementRemoved);
-
 			e.scene.addEventListener("pointcloud_added", onPointCloudAdded);
-			e.scene.addEventListener("measurement_added", onMeasurementAdded);
-			e.scene.addEventListener("profile_added", onProfileAdded);
-			e.scene.addEventListener("volume_added", onVolumeAdded);
-			e.scene.addEventListener("polygon_clip_volume_added", onVolumeAdded);
-			e.scene.addEventListener("measurement_removed", onMeasurementRemoved);
 		});
 
+	}
+	
+	initScene(){
+
+		let elScene = $("#menu_scene");
+		let elObjects = elScene.next().find("#scene_objects");
+		let elProperties = elScene.next().find("#scene_object_properties");
+		
+
+		{
+			let elExport = elScene.next().find("#scene_export");
+
+			let geoJSONIcon = `${Potree.resourcePath}/icons/file_geojson.svg`;
+			let dxfIcon = `${Potree.resourcePath}/icons/file_dxf.svg`;
+
+			elExport.append(`
+				Export: <br>
+				<a href="#" download="measure.json"><img name="geojson_export_button" src="${geoJSONIcon}" class="button-icon" style="height: 24px" /></a>
+				<a href="#" download="measure.dxf"><img name="dxf_export_button" src="${dxfIcon}" class="button-icon" style="height: 24px" /></a>
+			`);
+
+			let elDownloadJSON = elExport.find("img[name=geojson_export_button]").parent();
+			elDownloadJSON.click( (event) => {
+				let scene = this.viewer.scene;
+				let measurements = [...scene.measurements, ...scene.profiles, ...scene.volumes];
+
+				if(measurements.length > 0){
+					let geoJson = GeoJSONExporter.toString(measurements);
+
+					let url = window.URL.createObjectURL(new Blob([geoJson], {type: 'data:application/octet-stream'}));
+					elDownloadJSON.attr('href', url);
+				}else{
+					this.viewer.postError("no measurements to export");
+					event.preventDefault();
+				}
+			});
+
+			let elDownloadDXF = elExport.find("img[name=dxf_export_button]").parent();
+			elDownloadDXF.click( (event) => {
+				let scene = this.viewer.scene;
+				let measurements = [...scene.measurements, ...scene.profiles, ...scene.volumes];
+
+				if(measurements.length > 0){
+					let dxf = DXFExporter.toString(measurements);
+
+					let url = window.URL.createObjectURL(new Blob([dxf], {type: 'data:application/octet-stream'}));
+					elDownloadDXF.attr('href', url);
+				}else{
+					this.viewer.postError("no measurements to export");
+					event.preventDefault();
+				}
+			});
+		}
+
+		let propertiesPanel = new PropertiesPanel(elProperties, this.viewer);
+		propertiesPanel.setScene(this.viewer.scene);
 	}
 
 	initClippingTool(){
@@ -960,7 +849,8 @@ export class Sidebar{
 	    chPanel.setScene(this.viewer.scene);
 	    chPanel.setPointClouds(this.viewer.scene.pointclouds);
 	    
-
+		let treeContainer = elScene.next().find("#tree");
+		this.initTree(treeContainer);
 	}
 
 	initNavigation(){
