@@ -136,18 +136,18 @@ function parseEpt(event) {
 		if (dim.type == 'signed') switch (dim.size) {
 			case 1: data = new Int8Array(buf); break;
 			case 2: data = new Int16Array(buf); break;
-			case 4: data = new Int32Array(buf); break;
-			//case 8: data = new Int64Array(buf); break;
+			case 4: data = new Float32Array(buf); break;
+			case 8: data = new Float32Array(buf); break;
 		}
 		if (dim.type == 'unsigned') switch (dim.size) {
 			case 1: data = new Uint8Array(buf); break;
 			case 2: data = new Uint16Array(buf); break;
-			case 4: data = new Uint32Array(buf); break;
-			//case 8: data = new Uint64Array(buf); break;
+			case 4: data = new Float32Array(buf); break;
+			case 8: data = new Float32Array(buf); break;
 		}
 		if (dim.type == 'float') switch (dim.size) {
 			case 4: data = new Float32Array(buf); break;
-			case 8: data = new Float64Array(buf); break;
+			case 8: data = new Float32Array(buf); break;
 		}
 		let extractor = getExtractor(dimName);
 		

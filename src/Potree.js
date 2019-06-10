@@ -135,10 +135,15 @@ export function loadPointCloud(path, name, callback){
 								clampMin = -clampMax / 2;
 								clampMax = clampMax / 2 - 1;
 							}
+							// note that ints >=32 bits are cast to float32 in shader
 						}
 						if (dim.type == 'float') {
-							clampMax = 1000000; // FIXME -- what should the default be here?
+							clampMax = 1e6; // FIXME better default?
 						}
+						// FIXME clamp bounds at uint16 range until we have a better solution (pull bounds direct from ept json?)
+						clampMin = Math.max(clampMin, -65536);
+						clampMax = Math.min(clampMax, 65535);
+
 						console.log(name, clampMin, clampMax);
 						pointcloud.material.uniforms.clampMin.value[i] = clampMin;
 						pointcloud.material.uniforms.clampMax.value[i] = clampMax;
