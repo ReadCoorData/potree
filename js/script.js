@@ -67,9 +67,11 @@ var setForPC = (pcvals, f) => viewer.scene.pointclouds.forEach((pc, i) => f(pc, 
 
 // set the channel property for all channels in the pointcloud, vals being an array of each channel's value in sequence
 // optionally convert the raw value via a function passed as the 'convert' arg
-var setChannelsProp = (pc, property, vals, convert) => pc.pcoGeometry.channelNames.forEach(
+var setPropForChannels = (pc, property, vals, convert) => pc.pcoGeometry.channelNames.forEach(
 	(_, i) => pc.material.uniforms[property].value[i] = (convert || ((v)=>v))(vals[i])
 );
+
+var setForAllChannels = (propname, vals, convert) => setForPC(vals, (pc, vals) => setPropForChannels(pc, propname, vals, convert));
 
 var lookup = {
     r: 'resource',
@@ -263,6 +265,22 @@ var set = (k, v) => {
             break;
         case 'hq':
             viewer.useHQ = !!v;
+		    break;
+    	case 'chMin':
+    		setForAllChannels('clampMin', v);
+    		break;
+        case 'chMax':
+    		setForAllChannels('clampMax', v);
+    		break;
+    	case 'chFloor':
+            setForAllChannels('minBrightness', v);
+    		break;
+    	case 'chColor':
+    		setForAllChannels('channelColor', v, (v) => new THREE.Color(v));
+    		break;
+    	case 'chWeight':
+    		setForAllChannels('channelWeight', v);
+    		break;
         case 'resource':
         case 'location':
         case 'debug':
@@ -282,13 +300,6 @@ minBrightness - minimum brightness [0.0-1.0] of value at the low cutoff, e.g., 0
 channelWeight - scaling factor [0.0-1.0] for the channel's color before mixing with other channels; lower this if lots of channels
   present and aggregate color is getting blown out. 0 = de-activate channel entirely
 */
-function setChannelProperties(pointcloud, dict, ix) {
-    ix = ix || 0;
-    Object.keys(dict).forEach(propname => {
-		let value = dict[propname];
-		pointcloud.material.uniforms[propname].value[ix] = value;
-    });
-}
 
 var queryConfig = function() {
     // Extract configuration params from the query string.

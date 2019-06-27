@@ -40,57 +40,38 @@
     <script type="text/javascript">
 
       window.config = {
-      resource: [
-      'http://na.entwine.io/readcoor/v9c/apoe/ept.json',
-      'http://na.entwine.io/readcoor/v9c/gfap/ept.json',
-      'http://na.entwine.io/readcoor/v9c/snap/ept.json',
-      'http://na.entwine.io/readcoor/v9c/syn1/ept.json',
-      'http://na.entwine.io/readcoor/v9c/microglia/ept.json',
-      'http://na.entwine.io/readcoor/v9c/astrocyte/ept.json',
-      ],
-      pointSize: 8,
-      pointBudget: 3000000,
-      edlEnabled: true,
+          resource: [
+              'http://na.entwine.io/readcoor/v9c/apoe/ept.json',
+              'http://na.entwine.io/readcoor/v9c/gfap/ept.json',
+              'http://na.entwine.io/readcoor/v9c/snap/ept.json',
+              'http://na.entwine.io/readcoor/v9c/syn1/ept.json',
+              'http://na.entwine.io/readcoor/v9c/microglia/ept.json',
+              'http://na.entwine.io/readcoor/v9c/astrocyte/ept.json',
+          ],
+          pointSize: 8,
+          pointBudget: 3000000,
+          edlEnabled: true,
           pointType: Potree.PointSizeType.FIXED,
           material: Potree.PointColorType.CHANNELS,
           hq: true,
           position:  [12794.263, 10843.792, 13436.510],
           target: [5759.500, 10879.500, 40.500],
-      postLoad: (viewer) => {
-      let pcs = viewer.scene.pointclouds;
-   	    setChannelProperties(pcs[0], {
-	        channelColor: new THREE.Color("rgb(0,255,255)"),
-	        clampMax: 20,
-	    });
-   	    setChannelProperties(pcs[1], {
-	        channelColor: new THREE.Color("rgb(0,192,0)"),
-	        clampMax: 38,
-	    });
-   	    setChannelProperties(pcs[2], {
-	        channelColor: new THREE.Color("rgb(192,192,192)"),
-	        clampMax: 20,
-	    });
-   	    setChannelProperties(pcs[3], {
-	        channelColor: new THREE.Color("rgb(255,0,0)"),
-	        clampMax: 38,
-	    });
-      pcs[4].material.size = 4;
-   	    setChannelProperties(pcs[4], {
-	        channelColor: new THREE.Color("rgb(255,255,0)"),
-      clampMin: 84,
-      clampMax: 256,
-	    });
-      pcs[5].material.size = 4;
-   	    setChannelProperties(pcs[5], {
-	        channelColor: new THREE.Color("rgb(158,125,255)"),
-      clampMin: 75,
-	        clampMax: 146,
-      });
-          },
+	      chMin: [[0], [0], [0], [0], [84], [75]],
+	      chMax: [[20], [38], [20], [38], [256], [146]],
+	      chColor: [
+	          ["rgb(0,255,255)"],
+	          ["rgb(0,192,0)"],
+	          ["rgb(192,192,192)"],
+	          ["rgb(255,0,0)"],
+	          ["rgb(255,255,0)"],
+  	          ["rgb(158,125,255)"],
+          ],
+          postLoad: (viewer) => {
+              let pcs = viewer.scene.pointclouds;
+              pcs[4].material.size = 4;
+              pcs[5].material.size = 4;
+	      },
       };
-
-      
-      
 
       /*
             const str = a => '[' + a.map(v => v.toFixed(3).toString()) + ']'

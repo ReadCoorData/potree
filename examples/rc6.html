@@ -58,17 +58,15 @@
           hq: true,
           position: [2686.787, 35609.574, 30004.626],
           target: [2680.659, 21573.290, 6105.365],
-          postLoad: (viewer) => {
-	          setForPC([[256], [256], [256], [256], [256], [256]], (pc, vals) => setChannelsProp(pc, 'clampMax', vals));
-	          setForPC([
-                  ["rgb(42, 42, 130)"],
-	              ["rgb(80, 255, 56)"],
-	              ["rgb(42, 42, 130)"],
-	              ["rgb(241, 241, 173)"],
-	              ["rgb(80, 255, 56)"],
-	              ["rgb(228, 77, 77)"],
-              ], (pc, vals) => setChannelsProp(pc, 'channelColor', vals, (v) => new THREE.Color(v)));
-          },
+	      chMax: [[256], [256], [256], [256], [256], [256]],
+	      chColor: [
+              ["rgb(42, 42, 130)"],
+	          ["rgb(80, 255, 56)"],
+	          ["rgb(42, 42, 130)"],
+	          ["rgb(241, 241, 173)"],
+	          ["rgb(80, 255, 56)"],
+	          ["rgb(228, 77, 77)"],
+          ],
       };
 
     </script>
