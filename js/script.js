@@ -62,6 +62,15 @@ var clone = (v) => JSON.parse(JSON.stringify(v));
 
 var setAll = (f) => viewer.scene.pointclouds.forEach((pc) => f(pc));
 
+// call f(pointclouds[i], pcvals[i]) for each pointcloud
+var setForPC = (pcvals, f) => viewer.scene.pointclouds.forEach((pc, i) => f(pc, pcvals[i]));
+
+// set the channel property for all channels in the pointcloud, vals being an array of each channel's value in sequence
+// optionally convert the raw value via a function passed as the 'convert' arg
+var setChannelsProp = (pc, property, vals, convert) => pc.pcoGeometry.channelNames.forEach(
+	(_, i) => pc.material.uniforms[property].value[i] = (convert || ((v)=>v))(vals[i])
+);
+
 var lookup = {
     r: 'resource',
     m: 'material',

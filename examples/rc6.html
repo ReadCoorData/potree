@@ -59,31 +59,15 @@
           position: [2686.787, 35609.574, 30004.626],
           target: [2680.659, 21573.290, 6105.365],
           postLoad: (viewer) => {
-            let pcs = viewer.scene.pointclouds;
-   	    setChannelProperties(pcs[0], {
-	        channelColor: new THREE.Color("rgb(42, 42, 130)"),
-	        clampMax: 256,
-	    });
-   	    setChannelProperties(pcs[1], {
-	        channelColor: new THREE.Color("rgb(80, 255, 56)"),
-	        clampMax: 256,
-	    });
-   	    setChannelProperties(pcs[2], {
-	        channelColor: new THREE.Color("rgb(42, 42, 130)"),
-	        clampMax: 256,
-	    });
-   	    setChannelProperties(pcs[3], {
-	        channelColor: new THREE.Color("rgb(241, 241, 173)"),
-	        clampMax: 256,
-	    });
-   	    setChannelProperties(pcs[4], {
-	        channelColor: new THREE.Color("rgb(80, 255, 56)"),
-	        clampMax: 256,
-	    });
-   	    setChannelProperties(pcs[5], {
-	        channelColor: new THREE.Color("rgb(228, 77, 77)"),
-	        clampMax: 256,
-	    });
+	          setForPC([[256], [256], [256], [256], [256], [256]], (pc, vals) => setChannelsProp(pc, 'clampMax', vals));
+	          setForPC([
+                  ["rgb(42, 42, 130)"],
+	              ["rgb(80, 255, 56)"],
+	              ["rgb(42, 42, 130)"],
+	              ["rgb(241, 241, 173)"],
+	              ["rgb(80, 255, 56)"],
+	              ["rgb(228, 77, 77)"],
+              ], (pc, vals) => setChannelsProp(pc, 'channelColor', vals, (v) => new THREE.Color(v)));
           },
       };
 
