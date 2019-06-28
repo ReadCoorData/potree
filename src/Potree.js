@@ -128,25 +128,25 @@ export function loadPointCloud(path, name, callback){
 					let dim = geometry.channelDefs[name];
 					pointcloud.material.uniforms.channelWeight.value[i] = (dim ? 1 : 0);
 					if (dim) {
-						let clampMin = 0, clampMax = null;
+						let rangeMin = 0, rangeMax = null;
 						if (dim.type == 'signed' || dim.type == 'unsigned') {
-							clampMax = Math.pow(2, 8*dim.size);
+							rangeMax = Math.pow(2, 8*dim.size);
 							if (dim.type == 'signed') {
-								clampMin = -clampMax / 2;
-								clampMax = clampMax / 2 - 1;
+								rangeMin = -rangeMax / 2;
+								rangeMax = rangeMax / 2 - 1;
 							}
 							// note that ints >=32 bits are cast to float32 in shader
 						}
 						if (dim.type == 'float') {
-							clampMax = 1e6; // FIXME better default?
+							rangeMax = 1e6; // FIXME better default?
 						}
 						// FIXME clamp bounds at uint16 range until we have a better solution (pull bounds direct from ept json?)
-						clampMin = Math.max(clampMin, -65536);
-						clampMax = Math.min(clampMax, 65535);
+						rangeMin = Math.max(rangeMin, -65536);
+						rangeMax = Math.min(rangeMax, 65535);
 
-						console.log(name, clampMin, clampMax);
-						pointcloud.material.uniforms.clampMin.value[i] = clampMin;
-						pointcloud.material.uniforms.clampMax.value[i] = clampMax;
+						console.log(name, rangeMin, rangeMax);
+						geometry.channelDefs[name].rangeMin = rangeMin;
+						geometry.channelDefs[name].rangeMax = rangeMax;
 					}
 			    }
 			    

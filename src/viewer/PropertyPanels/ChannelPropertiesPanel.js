@@ -75,7 +75,7 @@ export class ChannelPropertiesPanel{
             </div>
         `);
 
-	    let initChannelSettings = function(material, i, name) {
+	    let initChannelSettings = function(material, i, name, def) {
 			let subpanel = $(`	    
                 <div class="divider channelheader">
                 	<span>${name}</span>
@@ -87,30 +87,32 @@ export class ChannelPropertiesPanel{
                 	<li><span title="Lower if too many channels are causing over-saturation. Set to zero to hide this channel.">Opacity</span>: <span id="lblweight"></span> <div id="sldweight"></div></li>
                 </ul>
             `);
-			
-			let clampMin = material.uniforms.clampMin.value[i];
-			let clampMax = material.uniforms.clampMax.value[i];
-			let logRange = (clampMin >= 0 && clampMax > 256);
+
+			let rangeMin = def.rangeMin;
+			let rangeMax = def.rangeMax;
+			let logRange = (rangeMin >= 0 && rangeMax > 256);
 			let rangeToVal = function(k) {
 				if (logRange) {
-					let logMin = Math.max(clampMin, 1.);
-					return (k > 0 ? logMin * Math.pow(clampMax / logMin, k) : 0);
+					let logMin = Math.max(rangeMin, 1.);
+					return (k > 0 ? logMin * Math.pow(rangeMax / logMin, k) : 0);
 				} else {
 					return k;
 				}
 			}
 			let valToRange = function(val) {
 				if (logRange) {
-					let logMin = Math.max(clampMin, 1.);
-					return (val > 0 ? Math.log(val / logMin) / Math.log(clampMax / logMin) : 0);
+					let logMin = Math.max(rangeMin, 1.);
+					return (val > 0 ? Math.log(val / logMin) / Math.log(rangeMax / logMin) : 0);
 				} else {
 					return val;
 				}
 			}
+			let clampMin = material.uniforms.clampMin.value[i];
+			let clampMax = material.uniforms.clampMax.value[i];
 		    subpanel.find('#sldrange').slider({
 				range: true,
 				values: [valToRange(clampMin), valToRange(clampMax)],
-				min: valToRange(clampMin), max: valToRange(clampMax), step: .01,
+				min: valToRange(rangeMin), max: valToRange(rangeMax), step: .01,
 				slide: (event, ui) => {
 					material.uniforms.clampMin.value[i] = rangeToVal(ui.values[0]);
 					material.uniforms.clampMax.value[i] = rangeToVal(ui.values[1]);
@@ -178,10 +180,11 @@ export class ChannelPropertiesPanel{
 			let numChannels = pointcloud.pcoGeometry.channelNames.length;
 			for (let chnum = 0; chnum < numChannels; chnum++) {
 				let name = pointcloud.pcoGeometry.channelNames[chnum];
+				let def = pointcloud.pcoGeometry.channelDefs[name];
 				if (numChannels == 1 && name == 'Intensity') {
 					name = pointcloud.name;
 				}
-				initChannelSettings(material, chnum, name);
+				initChannelSettings(material, chnum, name, def);
 			}
 	    }
 		
