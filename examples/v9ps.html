@@ -36,7 +36,13 @@
 		<div id="potree_render_area"></div>
 		<div id="potree_sidebar_container"></div>
 	</div>
-
+    <img id="entwine_copy" src="/resources/icons/entwine-share.svg"
+         title='Share a link with current view settings'
+         onclick="$('#entwine_copied').show()"
+         onmouseleave="$('#entwine_copied').hide()"
+		 />
+    <div id="entwine_copied">Copied shareable link</div>
+	
     <script type="text/javascript">
 
       window.config = {

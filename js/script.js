@@ -73,6 +73,12 @@ var setPropForChannels = (pc, property, vals, convert) => pc.pcoGeometry.channel
 
 var setForAllChannels = (propname, vals, convert) => setForPC(vals, (pc, vals) => setPropForChannels(pc, propname, vals, convert));
 
+var getPropForAllChannels = (propname) => viewer.scene.pointclouds.map(
+	(pc) => pc.pcoGeometry.channelNames.map(
+		(_, i) => pc.material.uniforms[propname].value[i]
+	)
+);
+
 var lookup = {
     r: 'resource',
     m: 'material',
@@ -157,6 +163,13 @@ var get = () => {
         cf: maybe('classificationFilter', getClassificationFilters()),
         hq: maybe('hq', viewer.useHQ),
 
+		// TODO don't populate these if they haven't changed from defaults
+		chMin: getPropForAllChannels('clampMin'),
+		chMax: getPropForAllChannels('clampMax'),
+		chFloor: getPropForAllChannels('minBrightness'),
+		chColor: getPropForAllChannels('channelColor'),
+		chWeight: getPropForAllChannels('channelWeight'),
+		
         // Always include these.
         p: viewer.scene.view.position.toArray(),
         t: viewer.scene.view.getPivot().toArray(),
