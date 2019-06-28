@@ -82,9 +82,9 @@ export class ChannelPropertiesPanel{
                 </div>
                 <ul class="pv-menu-list">
                 	<li>Range: <span id="lblrange"></span> <div id="sldrange"></div></li>
-                	<li>Min Brightness: <span id="lblminbright"></span> <div id="sldminbright"></div></li>
+                	<li><span title="Minimum brightness of the color ramp, used for values at bottom limit of 'range'">Min Brightness</span>: <span id="lblminbright"></span> <div id="sldminbright"></div></li>
                 	<li><input id="channel.color.picker" /></li>
-                	<li>Weight: <span id="lblweight"></span> <div id="sldweight"></div></li>
+                	<li><span title="Lower if too many channels are causing over-saturation. Set to zero to hide this channel.">Opacity</span>: <span id="lblweight"></span> <div id="sldweight"></div></li>
                 </ul>
             `);
 			
