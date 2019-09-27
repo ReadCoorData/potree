@@ -98,6 +98,7 @@ export class VolumeTool extends EventDispatcher{
 				// let pp = new THREE.Vector4(wp.x, wp.y, wp.z).applyMatrix4(camera.projectionMatrix);
 				let w = Math.abs((wp.z / 5));
 				
+				// what if >1 pointcloud?
 				let worldBound = this.viewer.scene.pointclouds[0].pcoGeometry.tightBoundingBox;
 				let height = worldBound.max.z - worldBound.min.z;
 				let zCenter = (worldBound.min.z + worldBound.max.z) / 2;			

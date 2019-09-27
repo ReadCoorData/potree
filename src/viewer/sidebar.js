@@ -5,7 +5,7 @@ import {VolumeTool} from "../utils/VolumeTool.js";
 
 import {GeoJSONExporter} from "../exporter/GeoJSONExporter.js"
 import {DXFExporter} from "../exporter/DXFExporter.js"
-import {Volume, SphereVolume} from "../utils/Volume.js"
+import {Volume, BoxVolume, SphereVolume} from "../utils/Volume.js"
 import {PolygonClipVolume} from "../utils/PolygonClipVolume.js"
 import {PropertiesPanel} from "./PropertyPanels/PropertiesPanel.js"
 import {ChannelPropertiesPanel} from "./PropertyPanels/ChannelPropertiesPanel.js"
@@ -56,6 +56,7 @@ export class Sidebar{
 		this.initNavigation();
 		this.initFilters();
 		this.initClippingTool();
+		this.initSlicingTool();
 		this.initSettings();
 		
 		$('#potree_version_number').html(Potree.version.major + "." + Potree.version.minor + Potree.version.suffix);
@@ -525,6 +526,80 @@ export class Sidebar{
 
 	}
 
+	initSlicingTool(){
+
+		// what if >1 pointcloud?
+		let worldBound = this.viewer.scene.pointclouds[0].pcoGeometry.tightBoundingBox;
+		let zMin = worldBound.min.z;
+		let zMax = worldBound.max.z;
+		let zHeight = zMax - zMin;
+
+		let $sldSliceDepth = $('#sldSliceDepth');
+		let $sldSliceThickness = $('#sldSliceThickness');
+		
+		$sldSliceDepth.slider({
+			value: (zMin + zMax) / 2,
+			min: zMin,
+			max: zMax,
+			//step: 1,
+			slide: (event, ui) => {
+				updateSlice();
+				setSliceDepthLabel();
+			}
+		});
+		$sldSliceThickness.slider({
+			value: zHeight,
+			min: 0,
+			max: zHeight,
+			//step: 1000,
+			slide: (event, ui) => {
+				updateSlice();
+				setSliceThicknessLabel();
+			}
+		});
+
+		let viewer = this.viewer;
+		let updateSlice = function() {
+			let depth = $sldSliceDepth.slider('value');
+			let thickness = $sldSliceThickness.slider('value');
+			let clipVolumes = viewer.scene.volumes.filter(volume => volume.clip === true);
+			let volume;
+		    if (clipVolumes.length >= 1) {
+				volume = clipVolumes[0];
+			} else {
+				// create a new clip volume encompassing the entire sample
+				volume = new BoxVolume();
+				volume.clip = true;
+				volume.name = 'Volume';
+				viewer.scene.addVolume(volume);
+				volume.position.set((worldBound.min.x + worldBound.max.x)/2,
+									(worldBound.min.y + worldBound.max.y)/2,
+									0);
+				volume.scale.set(worldBound.max.x - worldBound.min.x,
+								 worldBound.max.y - worldBound.min.y,
+								 1);
+				//viewer.inputHandler.toggleSelection(volume);
+				$("#cliptask_options").find('input[value=\'SHOW_INSIDE\']').trigger("click");
+			}
+
+			// clamp slice bounds to sample min/max
+			depth = Math.max(Math.min(depth, zMax - thickness/2), zMin + thickness/2);
+			
+			volume.scale.z = thickness;
+			volume.position.z = depth;
+		}
+		
+		let setSliceDepthLabel = function() {
+			$('#lblSliceDepth').html(`${$sldSliceDepth.slider('value')}`);
+		}
+		let setSliceThicknessLabel = function() {
+			$('#lblSliceThickness').html(`${$sldSliceThickness.slider('value')}`);
+		}
+		setSliceDepthLabel();
+		setSliceThicknessLabel();
+
+	}
+
 	initFilters(){
 		this.initClassificationList();
 		//this.initReturnFilters();
@@ -707,7 +782,7 @@ export class Sidebar{
 			step: 1000,
 			slide: (event, ui) => { this.viewer.setPointBudget(ui.value); }
 		});
-
+		
 	    /*
 		$('#sldFOV').slider({
 			value: this.viewer.getFOV(),
